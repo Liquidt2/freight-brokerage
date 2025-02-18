@@ -4,7 +4,7 @@ import { singleBlogPostQuery } from '@/lib/sanity/queries'
 import BlogPostClient from './blog-post-client'
 import Link from 'next/link'
 
-export const revalidate = 60
+export const revalidate = 0 // Disable caching for now to rule out cache issues
 
 async function getAllSlugs() {
   try {
@@ -23,9 +23,8 @@ async function getAllSlugs() {
 }
 
 async function getPost(slug: string, preview: boolean) {
-  // Handle invalid slug
   if (!slug || slug === 'null') {
-    return null;
+    throw new Error('Invalid slug provided');
   }
 
   try {
@@ -39,8 +38,7 @@ async function getPost(slug: string, preview: boolean) {
     const post = await client.fetch(singleBlogPostQuery, { slug })
 
     if (!post) {
-      console.error('Post not found:', slug)
-      return null;
+      throw new Error(`Post not found: ${slug}`);
     }
 
     console.log('Successfully fetched post:', post.title)
@@ -51,7 +49,7 @@ async function getPost(slug: string, preview: boolean) {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined
     })
-    return null
+    throw error // Let Next.js error boundary handle it
   }
 }
 
@@ -63,15 +61,12 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const preview = draftMode().isEnabled
-  const post = await getPost(params.slug, preview)
-
-  if (!post || !params.slug || params.slug === 'null') {
+  if (!params.slug || params.slug === 'null') {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="text-center py-12 bg-background rounded-lg shadow">
-          <h2 className="text-2xl font-bold mb-2">Invalid Blog Post</h2>
-          <p className="text-muted-foreground">The requested blog post is invalid or could not be found.</p>
+          <h2 className="text-2xl font-bold mb-2">Invalid Blog Post URL</h2>
+          <p className="text-muted-foreground">The blog post URL is invalid.</p>
           <div className="mt-6">
             <Link href="/blog" className="text-primary hover:underline">
               Return to Blog
@@ -82,5 +77,26 @@ export default async function BlogPost({ params }: { params: { slug: string } })
     )
   }
 
-  return <BlogPostClient post={post} />
+  try {
+    const preview = draftMode().isEnabled
+    const post = await getPost(params.slug, preview)
+    return <BlogPostClient post={post} />
+  } catch (error) {
+    console.error('Failed to render blog post:', error)
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center py-12 bg-background rounded-lg shadow border border-destructive/20">
+          <h2 className="text-2xl font-bold mb-2 text-destructive">Error Loading Blog Post</h2>
+          <p className="text-muted-foreground">
+            {error instanceof Error ? error.message : 'Failed to load blog post content. Please try again later.'}
+          </p>
+          <div className="mt-6">
+            <Link href="/blog" className="text-primary hover:underline">
+              Return to Blog
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }

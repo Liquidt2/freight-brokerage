@@ -27,7 +27,7 @@ export default function MainLayout({
   return (
     <div className="min-h-screen flex flex-col relative">
       <Navbar navigation={navigation} className="z-layer-nav" />
-      <div className="flex-1 flex flex-col relative z-layer-base">
+      <div className="flex-1 flex flex-col relative z-layer-base pt-20">
         {children}
       </div>
       <Footer footer={footer} className="z-layer-content" />

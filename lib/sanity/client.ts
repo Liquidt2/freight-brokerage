@@ -11,11 +11,10 @@ const clientConfig: ClientConfig = {
   projectId,
   dataset,
   apiVersion,
-  useCdn: false,
+  useCdn: true,
   token,
   perspective: 'published' as ClientPerspective,
   resultSourceMap: false,
-  withCredentials: true,
   ignoreBrowserTokenWarning: true
 }
 
@@ -23,34 +22,50 @@ const clientConfig: ClientConfig = {
 export const client = createClient(clientConfig)
 
 // Helper function to get the client
-export const getClient = (preview: boolean = false) => ({
-  ...client,
-  fetch: async (query: string, params?: any) => {
-    try {
-      console.log('Sanity request:', {
-        projectId,
-        dataset,
-        apiVersion,
-        query,
-        params,
-        hasToken: !!token
-      });
+export const getClient = (preview: boolean = false) => {
+  const client = createClient({
+    ...clientConfig,
+    useCdn: !preview,
+  })
 
-      const result = await client.fetch(query, params);
-      
-      console.log('Sanity response:', {
-        hasData: !!result,
-        type: result ? typeof result : 'null',
-        data: result
-      });
+  return {
+    fetch: async (query: string, params?: any) => {
+      try {
+        console.log('Sanity request:', {
+          projectId,
+          dataset,
+          apiVersion,
+          query,
+          params,
+          hasToken: !!token,
+          preview
+        });
 
-      return result;
-    } catch (error) {
-      console.error('Sanity error:', error);
-      throw error;
+        const result = await client.fetch(query, params);
+        
+        if (!result) {
+          console.error('No data returned from Sanity for query:', query);
+          throw new Error('No data found');
+        }
+
+        console.log('Sanity response:', {
+          hasData: !!result,
+          type: result ? typeof result : 'null'
+        });
+
+        return result;
+      } catch (error) {
+        console.error('Sanity error:', {
+          error,
+          query,
+          params,
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+        throw error;
+      }
     }
   }
-})
+}
 
 // Set up image builder
 const builder = imageUrlBuilder({

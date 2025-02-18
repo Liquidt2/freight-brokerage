@@ -31,6 +31,40 @@ type BlogPost = {
   excerpt: string
 }
 
+import { Skeleton } from "@/components/ui/skeleton"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertTriangle } from "lucide-react"
+import { Suspense } from "react"
+
+function BlogPostSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto animate-pulse">
+      <div className="mb-8">
+        <Skeleton className="h-10 w-32" />
+      </div>
+      <Skeleton className="h-[400px] w-full rounded-lg mb-8" />
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
+    </div>
+  )
+}
+
+function ErrorDisplay({ error }: { error: Error }) {
+  return (
+    <Alert variant="destructive" className="my-8">
+      <AlertTriangle className="h-4 w-4" />
+      <AlertTitle>Error Loading Content</AlertTitle>
+      <AlertDescription>
+        {error.message || "Failed to load blog post content. Please try again later."}
+      </AlertDescription>
+    </Alert>
+  )
+}
+
 export default function BlogPostClient({ post }: { post: BlogPost | undefined }) {
   if (!post) {
     return (
@@ -45,24 +79,28 @@ export default function BlogPostClient({ post }: { post: BlogPost | undefined })
     )
   }
 
-  return (
-    <motion.article
+  try {
+    return (
+      <Suspense fallback={<BlogPostSkeleton />}>
+        <motion.article
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       className="max-w-4xl mx-auto"
     >
-      <Button
-        variant="ghost"
-        asChild
-        className="mb-8 hover:bg-transparent hover:text-primary"
-      >
-        <Link href="/blog">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
-        </Link>
-      </Button>
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm py-2">
+        <Button
+          variant="ghost"
+          asChild
+          className="hover:bg-transparent hover:text-primary"
+        >
+          <Link href="/blog">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
+          </Link>
+        </Button>
+      </div>
 
-      <div className="relative h-[400px] rounded-lg overflow-hidden mb-8">
+      <div className="relative h-[400px] rounded-lg overflow-hidden mb-8 mt-4">
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
         {post.mainImage?.asset ? (
           <Image
@@ -212,6 +250,10 @@ export default function BlogPostClient({ post }: { post: BlogPost | undefined })
           }}
         />
       </div>
-    </motion.article>
-  )
+        </motion.article>
+      </Suspense>
+    )
+  } catch (error) {
+    return <ErrorDisplay error={error instanceof Error ? error : new Error('An unexpected error occurred')} />
+  }
 }
