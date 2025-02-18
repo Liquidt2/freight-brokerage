@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'BKE Logistics CMS',
-  description: 'Content Management System',
+  title: 'Sanity Studio',
+  description: 'FreightFlow Pro CMS',
 }
 
 export default function StudioLayout({
@@ -9,8 +9,8 @@ export default function StudioLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
-    </html>
+    <div className="h-screen">
+      {children}
+    </div>
   )
 }

@@ -4,34 +4,28 @@ export default defineType({
   name: 'post',
   title: 'Blog Posts',
   type: 'document',
-  groups: [
-    { name: 'content', title: 'Content' },
-    { name: 'meta', title: 'Meta' },
-    { name: 'seo', title: 'SEO' },
-  ],
   fields: [
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
       validation: Rule => Rule.required(),
-      group: 'content',
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: { source: 'title' },
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
       validation: Rule => Rule.required(),
-      group: 'content',
     }),
     defineField({
       name: 'author',
       title: 'Author',
       type: 'reference',
-      to: [{ type: 'author' }],
-      validation: Rule => Rule.required(),
-      group: 'meta',
+      to: { type: 'author' },
     }),
     defineField({
       name: 'mainImage',
@@ -40,46 +34,143 @@ export default defineType({
       options: {
         hotspot: true,
       },
-      validation: Rule => Rule.required(),
-      group: 'content',
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative Text',
+        },
+      ],
     }),
     defineField({
       name: 'categories',
       title: 'Categories',
       type: 'array',
       of: [{ type: 'reference', to: { type: 'category' } }],
-      group: 'meta',
+    }),
+    defineField({
+      name: 'industry',
+      title: 'Industry Focus',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Flatbed Transportation', value: 'flatbed' },
+          { title: 'Plastic Industry', value: 'plastic' },
+          { title: 'Pharmaceutical Logistics', value: 'pharmaceutical' },
+          { title: 'General Freight', value: 'general' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Draft', value: 'draft' },
+          { title: 'Published', value: 'published' },
+          { title: 'Archived', value: 'archived' }
+        ],
+      },
+      initialValue: 'draft',
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'publishedAt',
-      title: 'Published At',
+      title: 'Published at',
       type: 'datetime',
-      group: 'meta',
+      hidden: ({ document }) => document?.status !== 'published',
+    }),
+    defineField({
+      name: 'scheduledPublishAt',
+      title: 'Schedule Publish',
+      type: 'datetime',
+      hidden: ({ document }) => document?.status !== 'draft',
+      description: 'Set a future date to automatically publish this post',
     }),
     defineField({
       name: 'excerpt',
       title: 'Excerpt',
       type: 'text',
       validation: Rule => Rule.max(200),
-      group: 'content',
     }),
     defineField({
       name: 'readTime',
-      title: 'Read Time',
-      type: 'string',
-      group: 'meta',
+      title: 'Read Time (minutes)',
+      type: 'number',
+    }),
+    defineField({
+      name: 'visibility',
+      title: 'Visibility',
+      type: 'object',
+      fields: [
+        {
+          name: 'featured',
+          title: 'Featured Post',
+          type: 'boolean',
+          description: 'Show this post in featured sections',
+          initialValue: false,
+        },
+        {
+          name: 'showInLists',
+          title: 'Show in Post Lists',
+          type: 'boolean',
+          description: 'Show this post in blog lists and archives',
+          initialValue: true,
+        },
+        {
+          name: 'showInSearch',
+          title: 'Show in Search',
+          type: 'boolean',
+          description: 'Allow this post to appear in search results',
+          initialValue: true,
+        },
+        {
+          name: 'password',
+          title: 'Password Protection',
+          type: 'string',
+          description: 'Optional: Require a password to view this post',
+        }
+      ]
     }),
     defineField({
       name: 'body',
       title: 'Body',
       type: 'blockContent',
-      group: 'content',
+    }),
+    defineField({
+      name: 'relatedPosts',
+      title: 'Related Posts',
+      type: 'array',
+      of: [{ type: 'reference', to: { type: 'post' } }],
+      validation: Rule => Rule.unique(),
+    }),
+    defineField({
+      name: 'callToAction',
+      title: 'Call to Action',
+      type: 'object',
+      fields: [
+        {
+          name: 'text',
+          title: 'Text',
+          type: 'string',
+        },
+        {
+          name: 'buttonText',
+          title: 'Button Text',
+          type: 'string',
+        },
+        {
+          name: 'buttonLink',
+          title: 'Button Link',
+          type: 'string',
+        },
+      ],
     }),
     defineField({
       name: 'seo',
       title: 'SEO',
       type: 'seo',
-      group: 'seo',
     }),
   ],
   preview: {
@@ -87,10 +178,34 @@ export default defineType({
       title: 'title',
       author: 'author.name',
       media: 'mainImage',
+      status: 'status',
+      publishedAt: 'publishedAt'
     },
     prepare(selection) {
-      const { author } = selection
-      return { ...selection, subtitle: author && `by ${author}` }
+      const { author, status, publishedAt } = selection
+      const subtitle = [
+        author && `by ${author}`,
+        status && `[${status}]`,
+        publishedAt && `Published: ${new Date(publishedAt).toLocaleDateString()}`
+      ].filter(Boolean).join(' - ')
+      
+      return { ...selection, subtitle }
     },
   },
+  orderings: [
+    {
+      title: 'Published Date, New',
+      name: 'publishedAtDesc',
+      by: [
+        { field: 'publishedAt', direction: 'desc' }
+      ]
+    },
+    {
+      title: 'Status',
+      name: 'status',
+      by: [
+        { field: 'status', direction: 'asc' }
+      ]
+    }
+  ]
 })

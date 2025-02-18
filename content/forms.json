@@ -1,0 +1,245 @@
+{
+  "forms": [
+    {
+      "name": "Contact Us",
+      "slug": "contact-us",
+      "title": "Contact Us",
+      "description": "Get in touch with our team. We're here to help with any questions about our freight brokerage services.",
+      "fields": [
+        {
+          "label": "Full Name",
+          "name": "fullName",
+          "type": "text",
+          "placeholder": "Enter your full name",
+          "required": true,
+          "validation": {
+            "pattern": "^[a-zA-Z ]{2,}$",
+            "message": "Please enter a valid name (minimum 2 characters)"
+          }
+        },
+        {
+          "label": "Email",
+          "name": "email",
+          "type": "email",
+          "placeholder": "Enter your email address",
+          "required": true,
+          "validation": {
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "message": "Please enter a valid email address"
+          }
+        },
+        {
+          "label": "Phone",
+          "name": "phone",
+          "type": "tel",
+          "placeholder": "Enter your phone number",
+          "required": false,
+          "validation": {
+            "pattern": "^\\+?[1-9]\\d{9,14}$",
+            "message": "Please enter a valid phone number"
+          }
+        },
+        {
+          "label": "Subject",
+          "name": "subject",
+          "type": "text",
+          "placeholder": "What is your inquiry about?",
+          "required": true
+        },
+        {
+          "label": "Message",
+          "name": "message",
+          "type": "textarea",
+          "placeholder": "How can we help you?",
+          "required": true
+        }
+      ],
+      "complianceFields": [
+        {
+          "type": "consent",
+          "text": "I agree to the processing of my personal data according to the privacy policy.",
+          "required": true
+        }
+      ],
+      "submitButton": {
+        "text": "Send Message",
+        "loadingText": "Sending..."
+      },
+      "successMessage": {
+        "title": "Message Sent!",
+        "message": "Thank you for contacting us. We'll get back to you shortly."
+      },
+      "errorMessage": {
+        "title": "Error",
+        "message": "There was a problem sending your message. Please try again."
+      },
+      "notifications": {
+        "adminEmail": "admin@freightflowpro.com",
+        "emailTemplate": "New contact form submission from {fullName}:\n\nSubject: {subject}\nEmail: {email}\nPhone: {phone}\n\nMessage:\n{message}"
+      }
+    },
+    {
+      "name": "Request a Quote",
+      "slug": "request-quote",
+"title": "Request a Quote",
+"description": "Fill out the form below to receive a customized freight quote.",
+"fields": [
+  {
+    "label": "Company Name",
+    "name": "companyName",
+    "type": "text",
+    "placeholder": "Enter your company name",
+    "required": true
+  },
+  {
+    "label": "Contact Name",
+    "name": "contactName",
+    "type": "text",
+    "placeholder": "Enter your full name",
+    "required": true
+  },
+  {
+    "label": "Email",
+    "name": "email",
+    "type": "email",
+    "placeholder": "Enter your email address",
+    "required": true,
+    "validation": {
+      "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      "message": "Please enter a valid email address"
+    }
+  },
+  {
+    "label": "Phone",
+    "name": "phone",
+    "type": "tel",
+    "placeholder": "Enter your phone number",
+    "required": true,
+    "validation": {
+      "pattern": "^\\+?[1-9]\\d{9,14}$",
+      "message": "Please enter a valid phone number"
+    }
+  },
+  {
+    "label": "Truck & Trailer Type",
+    "name": "truckTrailerType",
+    "type": "select",
+    "required": true,
+    "options": [
+      "Full Truckload",
+      "Less Than Truckload (LTL)",
+      "Flatbed",
+      "Refrigerated",
+      "Expedited",
+      "Other"
+    ]
+  },
+  {
+    "label": "Origin City",
+    "name": "originCity",
+    "type": "text",
+    "placeholder": "Enter origin city",
+    "required": true
+  },
+  {
+    "label": "Origin State",
+    "name": "originState",
+    "type": "select",
+    "required": true,
+    "options": [
+      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ]
+  },
+  {
+    "label": "Zip Code",
+    "name": "zipCode",
+    "type": "text",
+    "placeholder": "Enter zip code",
+    "required": true
+  },
+  {
+    "label": "Origin Pickup Date",
+    "name": "originPickupDate",
+    "type": "date",
+    "required": true
+  },
+  {
+    "label": "Destination City",
+    "name": "destinationCity",
+    "type": "text",
+    "placeholder": "Enter destination city",
+    "required": true
+  },
+  {
+    "label": "Destination State",
+    "name": "destinationState",
+    "type": "select",
+    "required": true,
+    "options": [
+      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ]
+  },
+  {
+    "label": "Delivery Date",
+    "name": "deliveryDate",
+    "type": "date",
+    "required": true
+  },
+  {
+    "label": "Hazardous Material",
+    "name": "hazardousMaterial",
+    "type": "radio",
+    "required": false,
+    "options": [
+      { "value": "Yes" },
+      { "value": "No" }
+    ]
+  },
+  {
+    "label": "Additional Services",
+    "name": "additionalServices",
+    "type": "select",
+    "required": false,
+    "options": [
+      "Tarping", "Coil racks", "Temperature control", "Other"
+    ]
+  },
+  {
+    "label": "Additional Details",
+    "name": "details",
+    "type": "textarea",
+    "placeholder": "Please provide any additional details about your shipment",
+    "required": false
+  }
+],
+"complianceFields": [
+  {
+    "type": "consent",
+    "text": "I agree to the processing of my personal data according to the privacy policy.",
+    "required": true
+  },
+  {
+    "type": "opt-in",
+    "text": "I would like to receive updates about freight rates and industry news.",
+    "required": false
+  }
+],
+"submitButton": {
+  "text": "Request Quote",
+  "loadingText": "Submitting..."
+},
+"successMessage": {
+  "title": "Quote Request Received!",
+  "message": "Thank you for your quote request. Our team will analyze your requirements and get back to you with competitive rates within 1 business day."
+},
+"errorMessage": {
+  "title": "Error",
+  "message": "There was a problem submitting your quote request. Please try again or contact us directly."
+},
+"notifications": {
+  "adminEmail": "quotes@freightflowpro.com",
+  "emailTemplate": "New quote request from {companyName}:\n\nContact: {contactName}\nEmail: {email}\nPhone: {phone}\n\nTruck & Trailer Type: {truckTrailerType}\nRoute: {originCity}, {originState} to {destinationCity}, {destinationState}\nDelivery Date: {deliveryDate}\n\nAdditional Details:\n{details}"
+}
+    }
+  ]
+}

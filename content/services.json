@@ -1,0 +1,245 @@
+{
+  "services": [
+    {
+      "title": "Flatbed Transportation Services",
+      "slug": "flatbed-transportation",
+      "description": "Specialized flatbed freight solutions for oversized, heavy, and construction materials with expert handling and nationwide coverage.",
+      "icon": "truck",
+      "features": [
+        {
+          "title": "Equipment Specialization",
+          "description": "Access to a wide range of flatbed equipment to handle various cargo types",
+          "details": [
+            "Standard flatbeds for conventional loads",
+            "Step deck trailers for taller cargo",
+            "RGN (Removable Gooseneck) trailers for heavy equipment",
+            "Specialized securing equipment for unique loads"
+          ]
+        },
+        {
+          "title": "Load Types",
+          "description": "Expertise in handling diverse flatbed cargo requirements",
+          "details": [
+            "Construction materials and equipment",
+            "Steel and metal products",
+            "Industrial machinery",
+            "Prefabricated structures",
+            "Wind energy components"
+          ]
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Expert Load Securement",
+          "description": "Certified professionals ensuring proper tie-down and protection of your cargo",
+          "icon": "shield"
+        },
+        {
+          "title": "Real-time Tracking",
+          "description": "24/7 visibility of your shipment with detailed status updates",
+          "icon": "globe"
+        },
+        {
+          "title": "Permit Management",
+          "description": "Handling of all necessary permits for oversized and overweight loads",
+          "icon": "check"
+        }
+      ],
+      "requirements": [
+        {
+          "title": "Safety Protocols",
+          "description": "Comprehensive safety measures for secure transportation",
+          "items": [
+            "DOT compliance for all equipment",
+            "Regular safety inspections",
+            "Certified load securement practices",
+            "Weather monitoring and route planning"
+          ]
+        }
+      ],
+      "coverage": {
+        "areas": [
+          "Continental United States",
+          "Cross-border services to Canada",
+          "Major metropolitan areas",
+          "Remote construction sites"
+        ],
+        "restrictions": "Some routes may require special permits and advance planning for oversized loads"
+      },
+      "pricing": {
+        "model": "custom",
+        "description": "Customized pricing based on load specifications and requirements",
+        "factors": [
+          "Load dimensions and weight",
+          "Distance and route",
+          "Equipment requirements",
+          "Permit costs",
+          "Scheduling flexibility"
+        ]
+      },
+      "featured": true
+    },
+    {
+      "title": "Plastics Industry Transportation",
+      "slug": "plastics-transportation",
+      "description": "Specialized logistics solutions for the plastics industry, ensuring safe and efficient transportation of raw materials and finished products.",
+      "icon": "box",
+      "features": [
+        {
+          "title": "Material Handling",
+          "description": "Specialized handling for various plastic materials and products",
+          "details": [
+            "Resin pellet transportation",
+            "Bulk polymer shipping",
+            "Finished plastic products",
+            "Temperature-sensitive materials",
+            "Recyclable plastics"
+          ]
+        },
+        {
+          "title": "Equipment Options",
+          "description": "Specialized equipment for plastic industry needs",
+          "details": [
+            "Dry bulk trailers",
+            "Hopper trailers",
+            "Climate-controlled containers",
+            "Vacuum trucks for pellets",
+            "Specialized packaging solutions"
+          ]
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Contamination Prevention",
+          "description": "Strict protocols to maintain product purity during transport",
+          "icon": "shield"
+        },
+        {
+          "title": "Efficient Handling",
+          "description": "Specialized equipment for quick loading and unloading",
+          "icon": "clock"
+        },
+        {
+          "title": "Quality Assurance",
+          "description": "Regular cleaning and inspection of transport equipment",
+          "icon": "star"
+        }
+      ],
+      "requirements": [
+        {
+          "title": "Quality Standards",
+          "description": "Adherence to industry-specific quality requirements",
+          "items": [
+            "FDA compliance where applicable",
+            "Clean equipment certification",
+            "Material-specific handling protocols",
+            "Temperature monitoring systems"
+          ]
+        }
+      ],
+      "coverage": {
+        "areas": [
+          "Major manufacturing hubs",
+          "Chemical processing facilities",
+          "Distribution centers",
+          "Recycling facilities"
+        ],
+        "restrictions": "Some materials may require special handling and documentation"
+      },
+      "pricing": {
+        "model": "custom",
+        "description": "Tailored pricing based on material type and handling requirements",
+        "factors": [
+          "Material type and volume",
+          "Equipment requirements",
+          "Distance and routing",
+          "Handling specifications",
+          "Delivery timeline"
+        ]
+      },
+      "featured": true
+    },
+    {
+      "title": "Pharmaceutical Transportation",
+      "slug": "pharmaceutical-transportation",
+      "description": "GDP-compliant pharmaceutical logistics ensuring temperature-controlled, secure, and timely delivery of sensitive medical products.",
+      "icon": "flask",
+      "features": [
+        {
+          "title": "Temperature Control",
+          "description": "Advanced temperature-controlled solutions for pharmaceutical products",
+          "details": [
+            "Precise temperature monitoring",
+            "Cold chain maintenance",
+            "Real-time temperature logging",
+            "Temperature mapping",
+            "Backup cooling systems"
+          ]
+        },
+        {
+          "title": "Security Measures",
+          "description": "Enhanced security protocols for pharmaceutical shipments",
+          "details": [
+            "GPS tracking systems",
+            "Security seals",
+            "Chain of custody documentation",
+            "Video monitoring",
+            "Authorized personnel only access"
+          ]
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Regulatory Compliance",
+          "description": "Full compliance with GDP and pharmaceutical transportation regulations",
+          "icon": "shield"
+        },
+        {
+          "title": "Quality Assurance",
+          "description": "Comprehensive quality management system for pharmaceutical logistics",
+          "icon": "star"
+        },
+        {
+          "title": "Risk Management",
+          "description": "Proactive risk assessment and mitigation strategies",
+          "icon": "chart"
+        }
+      ],
+      "requirements": [
+        {
+          "title": "Compliance Standards",
+          "description": "Meeting strict pharmaceutical industry requirements",
+          "items": [
+            "GDP compliance",
+            "FDA regulations",
+            "Temperature monitoring",
+            "Security protocols",
+            "Documentation requirements"
+          ]
+        }
+      ],
+      "coverage": {
+        "areas": [
+          "Pharmaceutical manufacturers",
+          "Distribution centers",
+          "Hospitals and clinics",
+          "Research facilities",
+          "Pharmacies"
+        ],
+        "restrictions": "Subject to regulatory requirements and special handling protocols"
+      },
+      "pricing": {
+        "model": "custom",
+        "description": "Specialized pricing based on pharmaceutical logistics requirements",
+        "factors": [
+          "Temperature control needs",
+          "Security requirements",
+          "Distance and routing",
+          "Regulatory compliance",
+          "Insurance requirements"
+        ]
+      },
+      "featured": true
+    }
+  ]
+}

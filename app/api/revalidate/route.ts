@@ -17,10 +17,19 @@ export async function POST(req: NextRequest) {
       return new Response('Bad Request', { status: 400 })
     }
 
+    // Always revalidate homepage and forms when any content changes
+    revalidateTag('homepage')
+    revalidateTag('form')
+    
+    // Revalidate the specific content type
     revalidateTag(body._type)
     if (body.slug) {
       revalidateTag(`${body._type}:${body.slug}`)
     }
+
+    // Revalidate navigation and footer
+    revalidateTag('navigation')
+    revalidateTag('footer')
 
     return NextResponse.json({
       status: 200,
@@ -29,7 +38,7 @@ export async function POST(req: NextRequest) {
       body,
     })
   } catch (err: any) {
-    console.error(err)
+    console.error('Revalidation error:', err)
     return new Response(err.message, { status: 500 })
   }
 }

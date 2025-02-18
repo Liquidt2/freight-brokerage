@@ -4,32 +4,86 @@ export default defineType({
   name: 'homepage',
   title: 'Homepage',
   type: 'document',
-  groups: [
-    { name: 'hero', title: 'Hero Section' },
-    { name: 'features', title: 'Features Section' },
-    { name: 'cta', title: 'CTA Section' },
-    { name: 'seo', title: 'SEO' },
-  ],
   fields: [
     // Hero Section
     defineField({
       name: 'hero',
       title: 'Hero Section',
       type: 'object',
-      group: 'hero',
       fields: [
-        { name: 'title', type: 'string', title: 'Title' },
-        { name: 'subtitle', type: 'text', title: 'Subtitle' },
-        { name: 'backgroundImage', type: 'media', title: 'Background Image' },
         {
-          name: 'cta',
+          name: 'title',
+          title: 'Title',
+          type: 'string',
+          validation: Rule => Rule.required(),
+        },
+        {
+          name: 'subtitle',
+          title: 'Subtitle',
+          type: 'text',
+          validation: Rule => Rule.required(),
+        },
+        {
+          name: 'primaryButton',
+          title: 'Primary Button',
           type: 'object',
-          title: 'Call to Action',
           fields: [
-            { name: 'primaryText', type: 'string', title: 'Primary Button Text' },
-            { name: 'primaryLink', type: 'string', title: 'Primary Button Link' },
-            { name: 'secondaryText', type: 'string', title: 'Secondary Button Text' },
-            { name: 'secondaryLink', type: 'string', title: 'Secondary Button Link' },
+            { name: 'text', type: 'string', title: 'Text' },
+            { name: 'link', type: 'string', title: 'Link' },
+          ],
+        },
+        {
+          name: 'secondaryButton',
+          title: 'Secondary Button',
+          type: 'object',
+          fields: [
+            { name: 'text', type: 'string', title: 'Text' },
+            { name: 'link', type: 'string', title: 'Link' },
+          ],
+        },
+      ],
+    }),
+
+    // Industry Focus Section
+    defineField({
+      name: 'industryFocus',
+      title: 'Industry Focus Section',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'industries',
+          title: 'Industries',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'title', type: 'string', title: 'Title' },
+                { name: 'description', type: 'text', title: 'Description' },
+                {
+                  name: 'icon',
+                  title: 'Icon',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'Truck', value: 'truck' },
+                      { title: 'Box', value: 'box' },
+                      { title: 'Flask', value: 'flask' },
+                    ],
+                  },
+                },
+              ],
+            },
           ],
         },
       ],
@@ -40,21 +94,225 @@ export default defineType({
       name: 'features',
       title: 'Features Section',
       type: 'object',
-      group: 'features',
       fields: [
-        { name: 'title', type: 'string', title: 'Section Title' },
-        { name: 'subtitle', type: 'text', title: 'Section Subtitle' },
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
         {
           name: 'featuresList',
-          type: 'array',
           title: 'Features',
+          type: 'array',
           of: [
             {
               type: 'object',
               fields: [
                 { name: 'title', type: 'string', title: 'Title' },
                 { name: 'description', type: 'text', title: 'Description' },
-                { name: 'icon', type: 'string', title: 'Icon' },
+                {
+                  name: 'icon',
+                  title: 'Icon',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'Truck', value: 'truck' },
+                      { title: 'Shield', value: 'shield' },
+                      { title: 'Clock', value: 'clock' },
+                      { title: 'Globe', value: 'globe' },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+
+    // How It Works Section
+    defineField({
+      name: 'howItWorks',
+      title: 'How It Works Section',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'steps',
+          title: 'Steps',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'title', type: 'string', title: 'Title' },
+                { name: 'description', type: 'text', title: 'Description' },
+                { name: 'stepNumber', type: 'number', title: 'Step Number' },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+
+    // Latest Blog Posts Section
+    defineField({
+      name: 'blogSection',
+      title: 'Blog Posts Section',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'showLatestPosts',
+          title: 'Show Latest Posts',
+          type: 'boolean',
+          description: 'Enable to automatically display the latest blog posts',
+        },
+      ],
+    }),
+
+    // Testimonials Section
+    defineField({
+      name: 'testimonials',
+      title: 'Testimonials Section',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'testimonialsList',
+          title: 'Testimonials',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'quote', type: 'text', title: 'Quote' },
+                { name: 'author', type: 'string', title: 'Author Name' },
+                { name: 'company', type: 'string', title: 'Company' },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+
+    // Map Section
+    defineField({
+      name: 'mapSection',
+      title: 'Map/Coverage Section',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'coverageAreas',
+          title: 'Coverage Areas',
+          type: 'array',
+          of: [{ type: 'string' }],
+        },
+      ],
+    }),
+
+    // FAQ Section
+    defineField({
+      name: 'faq',
+      title: 'FAQ Section',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'questions',
+          title: 'Questions',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'question', type: 'string', title: 'Question' },
+                { name: 'answer', type: 'text', title: 'Answer' },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+
+    // News Section
+    defineField({
+      name: 'newsSection',
+      title: 'News Section',
+      type: 'object',
+      fields: [
+        {
+          name: 'title',
+          title: 'Section Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Section Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'newsItems',
+          title: 'News Items',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'title', type: 'string', title: 'Title' },
+                { name: 'content', type: 'text', title: 'Content' },
+                { name: 'date', type: 'date', title: 'Date' },
               ],
             },
           ],
@@ -67,13 +325,130 @@ export default defineType({
       name: 'cta',
       title: 'CTA Section',
       type: 'object',
-      group: 'cta',
       fields: [
-        { name: 'title', type: 'string', title: 'Title' },
-        { name: 'description', type: 'text', title: 'Description' },
-        { name: 'buttonText', type: 'string', title: 'Button Text' },
-        { name: 'buttonLink', type: 'string', title: 'Button Link' },
-        { name: 'backgroundImage', type: 'media', title: 'Background Image' },
+        {
+          name: 'title',
+          title: 'Title',
+          type: 'string',
+        },
+        {
+          name: 'subtitle',
+          title: 'Subtitle',
+          type: 'text',
+        },
+        {
+          name: 'buttonText',
+          title: 'Button Text',
+          type: 'string',
+        },
+        {
+          name: 'buttonLink',
+          title: 'Button Link',
+          type: 'string',
+        },
+      ],
+    }),
+
+    // Hidden Sections (created but not displayed)
+    defineField({
+      name: 'statistics',
+      title: 'Statistics Section (Hidden)',
+      type: 'object',
+      fields: [
+        {
+          name: 'stats',
+          title: 'Statistics',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'label', type: 'string', title: 'Label' },
+                { name: 'value', type: 'string', title: 'Value' },
+                { name: 'suffix', type: 'string', title: 'Suffix' },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+
+    defineField({
+      name: 'partners',
+      title: 'Partners Section (Hidden)',
+      type: 'object',
+      fields: [
+        {
+          name: 'partnersList',
+          title: 'Partners',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                { name: 'name', type: 'string', title: 'Partner Name' },
+                { name: 'description', type: 'text', title: 'Description' },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+
+    // Section Display Settings
+    defineField({
+      name: 'sectionSettings',
+      title: 'Section Display Settings',
+      type: 'object',
+      fields: [
+        {
+          name: 'visibleSections',
+          title: 'Visible Sections',
+          type: 'array',
+          of: [
+            {
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Hero', value: 'hero' },
+                  { title: 'Industry Focus', value: 'industryFocus' },
+                  { title: 'Features', value: 'features' },
+                  { title: 'How It Works', value: 'howItWorks' },
+                  { title: 'Blog Posts', value: 'blogSection' },
+                  { title: 'Testimonials', value: 'testimonials' },
+                  { title: 'Map/Coverage', value: 'mapSection' },
+                  { title: 'FAQ', value: 'faq' },
+                  { title: 'News', value: 'newsSection' },
+                  { title: 'CTA', value: 'cta' },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          name: 'sectionOrder',
+          title: 'Section Order',
+          type: 'array',
+          of: [
+            {
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Hero', value: 'hero' },
+                  { title: 'Industry Focus', value: 'industryFocus' },
+                  { title: 'Features', value: 'features' },
+                  { title: 'How It Works', value: 'howItWorks' },
+                  { title: 'Blog Posts', value: 'blogSection' },
+                  { title: 'Testimonials', value: 'testimonials' },
+                  { title: 'Map/Coverage', value: 'mapSection' },
+                  { title: 'FAQ', value: 'faq' },
+                  { title: 'News', value: 'newsSection' },
+                  { title: 'CTA', value: 'cta' },
+                ],
+              },
+            },
+          ],
+        },
       ],
     }),
 
@@ -82,7 +457,17 @@ export default defineType({
       name: 'seo',
       title: 'SEO',
       type: 'seo',
-      group: 'seo',
     }),
   ],
+  preview: {
+    select: {
+      title: 'hero.title',
+    },
+    prepare({ title }) {
+      return {
+        title: 'Homepage',
+        subtitle: title,
+      }
+    },
+  },
 })

@@ -1,111 +1,125 @@
+'use client'
+
 import Link from 'next/link'
-import { Truck } from 'lucide-react'
+import Image from 'next/image'
+import { Facebook, Instagram, Linkedin, Twitter, Truck, MapPin, Phone, Mail } from 'lucide-react'
+import { FooterContent } from './types'
 
-export function Footer() {
+const socialIcons = {
+  linkedin: Linkedin,
+  twitter: Twitter,
+  facebook: Facebook,
+  instagram: Instagram,
+}
+
+interface FooterProps {
+  footer: FooterContent | null
+  className?: string
+}
+
+export function Footer({ footer, className }: FooterProps) {
+  if (!footer) {
+    return (
+    <footer className={`bg-background border-t ${className || ''}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <p className="text-center text-muted-foreground">
+            Please add footer content in the Sanity Studio.
+          </p>
+        </div>
+      </footer>
+    )
+  }
+
   return (
-    <footer className="bg-background border-t">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
+    <footer className={`bg-background border-t ${className || ''}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Company Info */}
+          <div className="space-y-3">
             <Link href="/" className="flex items-center space-x-2">
-              <Truck className="h-6 w-6" />
-              <span className="font-bold text-lg">FreightFlow Pro</span>
+              {footer.companyInfo.showLogo && footer.companyInfo.logo ? (
+                <Image
+                  src={footer.companyInfo.logo}
+                  alt={footer.companyInfo.name}
+                  width={footer.companyInfo.logoWidth}
+                  height={footer.companyInfo.logoWidth * 0.5}
+                  className="object-contain"
+                />
+              ) : (
+                <Truck className="h-6 w-6" />
+              )}
+              {footer.companyInfo.showName && (
+                <span className="font-bold text-lg">{footer.companyInfo.name}</span>
+              )}
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Specialized freight solutions for pharmaceutical, plastic, and steel industries with 
-              industry-leading safety standards and monitoring systems.
-            </p>
           </div>
 
-          <div>
-            <h3 className="font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/about" className="text-sm hover:text-primary">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="text-sm hover:text-primary">
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-sm hover:text-primary">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-sm hover:text-primary">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-4">Our Services</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/services#dry-van" className="text-sm hover:text-primary">
-                  Specialized Dry Van Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#dry-van" className="text-sm hover:text-primary">
-                  Pharmaceutical Transport
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#dry-van" className="text-sm hover:text-primary">
-                  Plastic Materials Transport
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#flatbed" className="text-sm hover:text-primary">
-                  Specialized Flatbed Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/services#flatbed" className="text-sm hover:text-primary">
-                  Steel Transport Solutions
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/privacy" className="text-sm hover:text-primary">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-sm hover:text-primary">
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-8 pt-8 border-t">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} FreightFlow Pro. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="https://linkedin.com" className="text-muted-foreground hover:text-primary">
-                LinkedIn
-              </Link>
-              <Link href="https://twitter.com" className="text-muted-foreground hover:text-primary">
-                Twitter
-              </Link>
+          {/* Social Links */}
+          {footer.socialLinks && footer.socialLinks.some(social => social.show) && (
+            <div>
+              <h3 className="font-semibold mb-3">Connect With Us</h3>
+              <div className="flex space-x-4">
+                {footer.socialLinks
+                  .filter(social => social.show)
+                  .map((social) => {
+                    const Icon = socialIcons[social.platform as keyof typeof socialIcons]
+                    if (!Icon) return null
+                    return (
+                      <a
+                        key={social.platform}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary"
+                      >
+                        <Icon className="h-5 w-5" />
+                        <span className="sr-only">{social.platform}</span>
+                      </a>
+                    )
+                  })}
+              </div>
             </div>
+          )}
+
+          {/* Contact Info */}
+          <div className="text-sm text-muted-foreground space-y-2">
+            {footer.companyInfo.showAddress && (
+              <p className="flex items-center">
+                <MapPin className="h-4 w-4 mr-2" />
+                {footer.companyInfo.address}
+              </p>
+            )}
+            {footer.companyInfo.showPhone && (
+              <p className="flex items-center">
+                <Phone className="h-4 w-4 mr-2" />
+                Phone: {footer.companyInfo.phone}
+              </p>
+            )}
+            {footer.companyInfo.showEmail && (
+              <p className="flex items-center">
+                <Mail className="h-4 w-4 mr-2" />
+                Email: {footer.companyInfo.email}
+              </p>
+            )}
           </div>
         </div>
+
+        {/* Copyright */}
+        {footer.copyright && footer.showCopyright && (
+          <div className="mt-6 pt-6 border-t">
+<p className="text-sm text-center text-muted-foreground">
+  {footer.copyright}
+  <span className="mx-2">|</span>
+  <Link href="/privacy" className="hover:underline">
+    Privacy Policy
+  </Link>
+  <span className="mx-2">|</span>
+  <Link href="/terms" className="hover:underline">
+    Terms of Service
+  </Link>
+</p>
+          </div>
+        )}
       </div>
     </footer>
   )

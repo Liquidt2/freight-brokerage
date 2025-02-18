@@ -1,0 +1,100 @@
+{
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "2025-02-14",
+    "introduction": "Welcome to FreightFlow Pro. By using our services, you agree to these terms. Please read them carefully.",
+    "content": [
+      {
+        "sectionTitle": "Service Agreement",
+        "content": [
+          {
+            "_type": "block",
+            "style": "normal",
+            "children": [
+              {
+                "_type": "span",
+                "text": "These terms govern your use of FreightFlow Pro's freight brokerage and logistics services."
+              }
+            ]
+          }
+        ],
+        "subsections": [
+          {
+            "title": "Service Description",
+            "content": [
+              {
+                "_type": "block",
+                "style": "normal",
+                "children": [
+                  {
+                    "_type": "span",
+                    "text": "FreightFlow Pro provides freight brokerage services, connecting shippers with qualified carriers for the transportation of goods."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "serviceTerms": [
+      {
+        "title": "Freight Brokerage Services",
+        "description": "Our core brokerage services include carrier selection, rate negotiation, and shipment coordination.",
+        "conditions": [
+          "Carriers must maintain required insurance coverage",
+          "Shippers must provide accurate shipment details",
+          "Payment terms are net 30 days unless otherwise specified"
+        ]
+      },
+      {
+        "title": "Technology Platform",
+        "description": "Access to our digital platform for shipment management and tracking.",
+        "conditions": [
+          "Users must maintain account security",
+          "Platform availability is subject to maintenance windows",
+          "Data usage is governed by our privacy policy"
+        ]
+      }
+    ],
+    "liabilityLimitations": [
+      {
+        "title": "Service Liability",
+        "description": "FreightFlow Pro's liability is limited to the scope of services provided as a broker."
+      },
+      {
+        "title": "Force Majeure",
+        "description": "We are not liable for delays or failures due to circumstances beyond our reasonable control."
+      }
+    ],
+    "disputeResolution": {
+      "process": "Any disputes will first be addressed through direct negotiation.",
+      "jurisdiction": "All disputes shall be governed by the laws of the State of Texas.",
+      "arbitration": "Unresolved disputes shall be settled by binding arbitration."
+    },
+    "terminationClauses": [
+      {
+        "title": "Service Termination",
+        "conditions": [
+          "Either party may terminate with 30 days written notice",
+          "Immediate termination for material breach"
+        ],
+        "consequences": [
+          "Outstanding payments remain due",
+          "Confidentiality obligations survive termination"
+        ]
+      }
+    ],
+    "contactInformation": {
+      "email": "legal@freightflowpro.com",
+      "phone": "1-800-555-0123",
+      "address": "123 Logistics Way, Dallas, TX 75201"
+    },
+    "effectiveDate": "2025-02-14",
+    "seo": {
+      "title": "Terms of Service | FreightFlow Pro",
+      "description": "Read our terms of service to understand your rights and responsibilities when using FreightFlow Pro's freight brokerage services.",
+      "keywords": ["terms of service", "freight brokerage terms", "shipping terms", "logistics terms"]
+    }
+  }
+}

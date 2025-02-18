@@ -1,151 +1,132 @@
 "use client"
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { useTheme } from 'next-themes'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { Truck, Menu, X, Sun, Moon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { useTheme } from "next-themes"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { Truck, Sun, Moon, ChevronDown } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { NavigationContent } from "./navigation-types"
 
-export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
+interface NavbarProps {
+  navigation: NavigationContent | null
+  className?: string
+}
+
+export function Navbar({ navigation, className }: NavbarProps) {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
   const { scrollY } = useScroll()
+  
+  // Framer Motion background color transition
   const backgroundColor = useTransform(
     scrollY,
     [0, 100],
-    ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.9)']
+    ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.9)"]
   )
   const darkBackgroundColor = useTransform(
     scrollY,
     [0, 100],
-    ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.9)']
+    ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.9)"]
   )
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const navItems = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/services', label: 'Services' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/contact', label: 'Contact' },
-  ]
+  if (!navigation) {
+    return (
+      <nav className="bg-background border-b w-full">
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <p className="text-center text-muted-foreground">
+            Please add navigation content in the Sanity Studio.
+          </p>
+        </div>
+      </nav>
+    )
+  }
 
-  const navStyle = mounted ? {
-    backgroundColor: theme === 'dark' ? darkBackgroundColor : backgroundColor,
-  } : {}
+  const visibleMenuItems = navigation.menuItems.filter(item => item.show)
 
   return (
-    <motion.nav
-      style={navStyle}
-      className="floating-nav glass-effect mx-auto max-w-7xl"
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    <motion.div
+      style={mounted ? { backgroundColor: theme === "dark" ? darkBackgroundColor : backgroundColor } : {}}
+      className={`fixed top-0 left-0 right-0 flex justify-center w-full transition-all duration-300 ${className || ""}`}
     >
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+      <motion.nav
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="floating-nav w-full max-w-5xl mx-auto px-8 relative z-25"
+      >
+        <div className="flex items-center justify-start h-14">
+          
+          {/* Logo */}
           <motion.div 
-            className="flex items-center"
-            whileHover={{ scale: 1.05 }}
+            className="flex-shrink-0"
+            whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <Link href="/" className="flex items-center space-x-2">
-              <Truck className="h-8 w-8" />
-              <span className="font-bold text-xl">FreightFlow Pro</span>
+            <Link href="/" className="flex items-center space-x-4">
+              {navigation.logo?.showImage && navigation.logo.image ? (
+                <div className="h-10">
+                  <Image
+                    src={navigation.logo.image}
+                    alt={navigation.logo.text}
+                    width={104}
+                    height={40}
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              ) : navigation.logo?.showIcon ? (
+                <Truck className="h-6 w-6" />
+              ) : null}
+              {navigation.logo?.showText && (
+                <span className="font-bold text-base">{navigation.logo.text}</span>
+              )}
             </Link>
           </motion.div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-8">
-            {navItems.map((item) => (
+          {/* Navigation Links */}
+          <div className="flex items-center space-x-6 ml-auto">
+            {visibleMenuItems.map((item, index) => (
               <motion.div
-                key={item.href}
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                key={`${item.href}-${index}`}
+                whileHover={{ scale: 1.02, y: -2 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 400, 
+                  damping: 10,
+                  mass: 0.8
+                }}
               >
-                <Link
-                  href={item.href}
-                  className="text-sm font-medium transition-colors hover:text-primary relative group"
-                >
-                  {item.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
-                </Link>
+                {item.isButton ? (
+                  <Button variant={item.buttonVariant || "default"} asChild className="rounded-full text-sm px-4 py-2 h-auto font-medium shadow-sm">
+                    <Link href={item.href}>{item.text}</Link>
+                  </Button>
+                ) : (
+                  <Link href={item.href} className="text-sm font-medium nav-link transition-colors hover:text-primary">
+                    {item.text}
+                  </Link>
+                )}
               </motion.div>
             ))}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
-              <Button variant="default" asChild className="rounded-full shadow-md border-primary/20">
-                <Link href="/quote">Get Quote</Link>
-              </Button>
-            </motion.div>
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 180 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="rounded-full p-2 hover:bg-primary/10 border border-primary/20"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </motion.button>
           </div>
 
-          {/* Mobile Navigation */}
-          <div className="flex items-center md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="mr-2 rounded-full border border-primary/20"
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(!isOpen)}
-              className="rounded-full border border-primary/20"
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </div>
+          {/* Theme Toggle */}
+          <motion.button
+            whileHover={{ scale: 1.05, rotate: 180 }}
+            transition={{ duration: 0.3 }}
+            className="relative rounded-full p-2 hover:bg-primary/10 flex-shrink-0"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            <Sun className="h-5 w-5 transition-opacity duration-300 dark:opacity-0" />
+            <Moon className="absolute h-5 w-5 opacity-0 transition-opacity duration-300 dark:opacity-100" />
+          </motion.button>
         </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="md:hidden glass-effect rounded-b-3xl border-t border-primary/20"
-        >
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="block px-3 py-2 rounded-full text-base font-medium hover:bg-primary/10 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div className="px-3 py-2">
-              <Button className="w-full rounded-full shadow-md border-primary/20" asChild>
-                <Link href="/quote">Get Quote</Link>
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </motion.nav>
+      </motion.nav>
+    </motion.div>
   )
 }

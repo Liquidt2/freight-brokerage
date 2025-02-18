@@ -25,6 +25,8 @@ export default defineType({
           { title: 'Strong', value: 'strong' },
           { title: 'Emphasis', value: 'em' },
           { title: 'Code', value: 'code' },
+          { title: 'Underline', value: 'underline' },
+          { title: 'Strike', value: 'strike-through' },
         ],
         annotations: [
           {
@@ -36,6 +38,15 @@ export default defineType({
                 title: 'URL',
                 name: 'href',
                 type: 'url',
+                validation: Rule => Rule.uri({
+                  scheme: ['http', 'https', 'mailto', 'tel']
+                })
+              },
+              {
+                title: 'Open in new tab',
+                name: 'blank',
+                type: 'boolean',
+                initialValue: true,
               },
             ],
           },
@@ -57,15 +68,68 @@ export default defineType({
           name: 'caption',
           type: 'string',
           title: 'Caption',
-          description: 'Optional caption text',
+          description: 'Optional caption to display below the image',
         },
       ],
     }),
     defineArrayMember({
       type: 'code',
+      title: 'Code Block',
       options: {
+        language: 'javascript',
         withFilename: true,
       },
+    }),
+    defineArrayMember({
+      type: 'object',
+      name: 'callout',
+      title: 'Callout',
+      fields: [
+        {
+          name: 'type',
+          type: 'string',
+          title: 'Type',
+          options: {
+            list: [
+              { title: 'Info', value: 'info' },
+              { title: 'Warning', value: 'warning' },
+              { title: 'Success', value: 'success' },
+              { title: 'Error', value: 'error' },
+            ],
+          },
+        },
+        {
+          name: 'content',
+          type: 'text',
+          title: 'Content',
+        },
+      ],
+    }),
+    defineArrayMember({
+      type: 'object',
+      name: 'table',
+      title: 'Table',
+      fields: [
+        {
+          name: 'rows',
+          type: 'array',
+          title: 'Rows',
+          of: [
+            {
+              type: 'object',
+              name: 'row',
+              fields: [
+                {
+                  name: 'cells',
+                  type: 'array',
+                  title: 'Cells',
+                  of: [{ type: 'text' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     }),
   ],
 })

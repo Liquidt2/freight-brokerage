@@ -80,7 +80,7 @@ const formSteps: FormStep[] = [
   },
 ]
 
-export function QuoteForm() {
+export default function QuoteForm() {
   const [step, setStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -126,7 +126,7 @@ export function QuoteForm() {
   return (
     <div className="space-y-8">
       {/* Progress Steps */}
-      <div className="flex justify-between mb-8">
+      <div className="flex justify-between mb-8 bg-card p-6 rounded-lg card-border">
         {formSteps.map((formStep, index) => (
           <div key={index} className="flex flex-col items-center">
             <div
@@ -152,6 +152,7 @@ export function QuoteForm() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.2 }}
+          className="bg-card p-6 rounded-lg card-border"
         >
           <div className="text-center mb-6">
             <h2 className="text-2xl font-semibold">{formSteps[step].title}</h2>

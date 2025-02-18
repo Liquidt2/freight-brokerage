@@ -1,0 +1,194 @@
+{
+  "hero": {
+    "secondaryButton": {
+      "link": "/services",
+      "text": "Learn More"
+    },
+    "subtitle": "Expert logistics services in flatbed, plastics, and pharmaceutical transportation. Your cargo, our commitment to excellence.",
+    "primaryButton": {
+      "link": "/quote",
+      "text": "Get a Quote"
+    },
+    "title": "Specialized Freight Brokerage Solutions"
+  },
+  "industryFocus": {
+    "title": "Industries We Serve",
+    "subtitle": "Specialized solutions for complex transportation needs",
+    "industries": [
+      {
+        "title": "Flatbed Transport",
+        "description": "Expert handling of oversized and specialized cargo",
+        "icon": "truck"
+      },
+      {
+        "title": "Pharmaceutical",
+        "description": "Temperature-controlled and secure pharmaceutical logistics",
+        "icon": "box"
+      },
+      {
+        "title": "Plastics & Chemicals",
+        "description": "Safe and compliant transport of plastic materials",
+        "icon": "flask"
+      }
+    ]
+  },
+  "features": {
+    "featuresList": [
+      {
+        "icon": "truck",
+        "description": "Deep knowledge in flatbed, plastics, and pharmaceutical transportation.",
+        "title": "Specialized Expertise"
+      },
+      {
+        "icon": "clock",
+        "description": "Round-the-clock customer service and shipment monitoring.",
+        "title": "24/7 Support"
+      },
+      {
+        "description": "Extensive network of verified carriers across the United States.",
+        "title": "Nationwide Coverage",
+        "icon": "globe"
+      },
+      {
+        "icon": "shield",
+        "description": "Rigorous safety standards and compliance protocols.",
+        "title": "Safety First"
+      }
+    ],
+    "subtitle": "We combine industry expertise with cutting-edge technology to deliver superior freight brokerage services.",
+    "title": "Why Choose FreightFlow Pro"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Simple steps to start shipping with us",
+    "steps": [
+      {
+        "title": "Request a Quote",
+        "description": "Fill out our quick quote form with your shipment details",
+        "stepNumber": 1
+      },
+      {
+        "title": "Get Matched",
+        "description": "We match you with the perfect carrier for your needs",
+        "stepNumber": 2
+      },
+      {
+        "title": "Track & Deliver",
+        "description": "Monitor your shipment in real-time until safe delivery",
+        "stepNumber": 3
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "What Our Clients Say",
+    "subtitle": "Real feedback from satisfied customers",
+    "testimonialsList": [
+      {
+        "quote": "Outstanding service and reliable deliveries every time.",
+        "author": "John Smith",
+        "company": "ABC Manufacturing"
+      },
+      {
+        "quote": "Their expertise in pharmaceutical transport is unmatched.",
+        "author": "Sarah Johnson",
+        "company": "PharmaCorp"
+      },
+      {
+        "quote": "Professional team that always goes the extra mile.",
+        "author": "Mike Wilson",
+        "company": "Plastics Industries"
+      }
+    ]
+  },
+  "mapSection": {
+    "title": "Coverage Areas",
+    "subtitle": "Serving major routes across the United States",
+    "coverageAreas": [
+      "Northeast",
+      "Southeast",
+      "Midwest",
+      "Southwest",
+      "West Coast",
+      "Pacific Northwest"
+    ]
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Common questions about our services",
+    "questions": [
+      {
+        "question": "What types of freight do you handle?",
+        "answer": "We specialize in flatbed, pharmaceutical, and plastics transportation, handling both standard and specialized cargo."
+      },
+      {
+        "question": "How do you ensure cargo safety?",
+        "answer": "We work with vetted carriers and implement strict safety protocols for all shipments."
+      },
+      {
+        "question": "What tracking options are available?",
+        "answer": "We provide real-time tracking and 24/7 updates for all shipments."
+      }
+    ]
+  },
+  "newsSection": {
+    "title": "Latest Updates",
+    "subtitle": "Stay informed about our services and industry news",
+    "newsItems": [
+      {
+        "title": "New Routes Added",
+        "content": "Expanding our coverage to include more specialized routes",
+        "date": "2025-02-01"
+      },
+      {
+        "title": "Safety Recognition",
+        "content": "Awarded for outstanding safety performance",
+        "date": "2025-01-15"
+      },
+      {
+        "title": "Technology Upgrade",
+        "content": "Implementing new tracking systems for better visibility",
+        "date": "2025-01-01"
+      }
+    ]
+  },
+  "sectionSettings": {
+    "visibleSections": [
+      "hero",
+      "features",
+      "industryFocus",
+      "howItWorks",
+      "testimonials",
+      "mapSection",
+      "faq",
+      "newsSection",
+      "cta"
+    ],
+    "sectionOrder": [
+      "hero",
+      "features",
+      "industryFocus",
+      "howItWorks",
+      "testimonials",
+      "mapSection",
+      "faq",
+      "newsSection",
+      "cta"
+    ]
+  },
+  "seo": {
+    "keywords": [
+      "freight brokerage",
+      "flatbed transport",
+      "pharmaceutical logistics",
+      "plastics shipping"
+    ],
+    "description": "Expert freight brokerage services specializing in flatbed, plastics, and pharmaceutical transportation. Get reliable, efficient, and secure logistics solutions.",
+    "title": "FreightFlow Pro | Specialized Freight Brokerage Services"
+  },
+  "cta": {
+    "subtitle": "Contact us today to discuss your specialized transportation needs.",
+    "title": "Ready to Streamline Your Freight Operations?",
+    "buttonText": "Contact Us",
+    "buttonLink": "/contact"
+  }
+}

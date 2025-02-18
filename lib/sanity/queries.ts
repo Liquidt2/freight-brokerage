@@ -1,48 +1,293 @@
-import { groq } from 'next-sanity'
-
-// Navigation
-export const navigationQuery = groq`
-*[_type == "navigation"][0] {
-  items[] {
-    text,
-    link,
-    dropdown[] {
-      text,
-      link,
-      description,
-      icon
-    }
+export const aboutQuery = `*[_type == "about"][0] {
+  title,
+  mission,
+  history[] {
+    title,
+    description,
+    year
+  },
+  values[] {
+    title,
+    description,
+    icon
+  },
+  "seo": seo {
+    title,
+    description,
+    keywords,
+    "ogImage": ogImage.asset->url
   }
 }`
 
-// Footer
-export const footerQuery = groq`
-*[_type == "footer"][0] {
-  logo,
+export const servicesQuery = `*[_type == "service"] {
+  title,
+  "slug": slug.current,
   description,
-  columns[] {
+  icon,
+  features[] {
     title,
-    links[] {
-      text,
-      url
+    description,
+    details
+  },
+  benefits[] {
+    title,
+    description,
+    icon
+  },
+  requirements[] {
+    title,
+    description,
+    items
+  },
+  coverage {
+    areas,
+    restrictions
+  },
+  pricing {
+    model,
+    description,
+    factors
+  },
+  featured,
+  "seo": seo {
+    title,
+    description,
+    keywords,
+    "ogImage": ogImage.asset->url
+  }
+}`
+
+export const policyQuery = `*[_type == "policy"][0] {
+  title,
+  lastUpdated,
+  introduction,
+  content[] {
+    sectionTitle,
+    content[] {
+      ...,
+      _type == "block" => {
+        ...,
+        markDefs[] {
+          ...,
+          _type == "internalLink" => {
+            "slug": @.reference->slug.current
+          }
+        }
+      }
+    },
+    subsections[] {
+      title,
+      content[] {
+        ...,
+        _type == "block" => {
+          ...,
+          markDefs[] {
+            ...,
+            _type == "internalLink" => {
+              "slug": @.reference->slug.current
+            }
+          }
+        }
+      }
     }
   },
-  social,
-  contact,
-  legal[] {
-    text,
-    url
+  contactInformation {
+    email,
+    phone,
+    address
+  },
+  effectiveDate,
+  "seo": seo {
+    title,
+    description,
+    keywords,
+    "ogImage": ogImage.asset->url
   }
 }`
 
-// Homepage
-export const homepageQuery = groq`
-*[_type == "homepage"][0] {
+export const termsQuery = `*[_type == "terms"][0] {
+  title,
+  lastUpdated,
+  introduction,
+  content[] {
+    sectionTitle,
+    content[] {
+      ...,
+      _type == "block" => {
+        ...,
+        markDefs[] {
+          ...,
+          _type == "internalLink" => {
+            "slug": @.reference->slug.current
+          }
+        }
+      }
+    },
+    subsections[] {
+      title,
+      content[] {
+        ...,
+        _type == "block" => {
+          ...,
+          markDefs[] {
+            ...,
+            _type == "internalLink" => {
+              "slug": @.reference->slug.current
+            }
+          }
+        }
+      }
+    }
+  },
+  serviceTerms[] {
+    title,
+    description,
+    conditions
+  },
+  liabilityLimitations[] {
+    title,
+    description
+  },
+  disputeResolution {
+    process,
+    jurisdiction,
+    arbitration
+  },
+  terminationClauses[] {
+    title,
+    conditions,
+    consequences
+  },
+  contactInformation {
+    email,
+    phone,
+    address
+  },
+  effectiveDate,
+  "seo": seo {
+    title,
+    description,
+    keywords,
+    "ogImage": ogImage.asset->url
+  }
+}`
+
+export const footerQuery = `*[_type == "footer"][0] {
+  companyInfo {
+    name,
+    showName,
+    "logo": logo.asset->url,
+    showLogo,
+    logoWidth,
+    address,
+    showAddress,
+    phone,
+    showPhone,
+    email,
+    showEmail
+  },
+  socialLinks[] {
+    platform,
+    url,
+    show
+  },
+  links[] {
+    title,
+    url,
+    show
+  },
+  copyright,
+  showCopyright,
+  "seo": seo {
+    title,
+    description,
+    keywords,
+    "ogImage": ogImage.asset->url
+  }
+}`
+
+export const blogPostsQuery = `*[_type == "post"] {
+  title,
+  "slug": slug.current,
+  body,
+  "author": author->{
+    name,
+    "image": image.asset->url
+  },
+  publishedAt,
+  readTime,
+  "categories": categories[]->{ title },
+  industry,
+  mainImage {
+    asset->,
+    alt
+  },
+  excerpt,
+  featured,
+  "seo": seo {
+    title,
+    description,
+    keywords,
+    "ogImage": ogImage.asset->url
+  }
+}`
+
+export const singleBlogPostQuery = `*[_type == "post" && slug.current == $slug][0] {
+  title,
+  "slug": slug.current,
+  body[] {
+    ...,
+    _type == "image" => {
+      ...,
+      "asset": asset->
+    }
+  },
+  "author": author->{
+    name,
+    "image": image.asset->url
+  },
+  publishedAt,
+  readTime,
+  "categories": categories[]->{ title },
+  industry,
+  mainImage {
+    asset->,
+    alt
+  },
+  excerpt,
+  featured,
+  "seo": seo {
+    title,
+    description,
+    keywords,
+    "ogImage": ogImage.asset->url
+  }
+}`
+
+// Helper function to handle missing references
+export const homepageQuery = `*[_type == "homepage" && !(_id in path("drafts.**"))][0] {
+  _id,
+  _type,
   hero {
     title,
     subtitle,
-    backgroundImage,
-    cta
+    primaryButton {
+      text,
+      link
+    },
+    secondaryButton {
+      text,
+      link
+    }
+  },
+  industryFocus {
+    title,
+    subtitle,
+    industries[] {
+      title,
+      description,
+      icon
+    }
   },
   features {
     title,
@@ -53,104 +298,149 @@ export const homepageQuery = groq`
       icon
     }
   },
+  howItWorks {
+    title,
+    subtitle,
+    steps[] {
+      title,
+      description,
+      stepNumber
+    }
+  },
+  blogSection {
+    title,
+    subtitle,
+    showLatestPosts
+  },
+  testimonials {
+    title,
+    subtitle,
+    testimonialsList[] {
+      quote,
+      author,
+      company
+    }
+  },
+  mapSection {
+    title,
+    subtitle,
+    coverageAreas
+  },
+  faq {
+    title,
+    subtitle,
+    questions[] {
+      question,
+      answer
+    }
+  },
+  newsSection {
+    title,
+    subtitle,
+    newsItems[] {
+      title,
+      content,
+      date
+    }
+  },
   cta {
     title,
-    description,
+    subtitle,
     buttonText,
-    buttonLink,
-    backgroundImage
+    buttonLink
   },
-  seo
-}`
-
-// Blog Posts
-export const allPostsQuery = groq`
-*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
-  _id,
-  title,
-  slug,
-  mainImage,
-  excerpt,
-  publishedAt,
-  readTime,
-  "author": author->name,
-  "categories": categories[]->title
-}`
-
-export const postBySlugQuery = groq`
-*[_type == "post" && slug.current == $slug][0] {
-  _id,
-  title,
-  slug,
-  mainImage,
-  body,
-  publishedAt,
-  readTime,
-  "author": author->name,
-  "categories": categories[]->title
-}`
-
-// Categories
-export const allCategoriesQuery = groq`
-*[_type == "category"] {
-  _id,
-  title,
-  slug,
-  description
-}`
-
-// Services
-export const allServicesQuery = groq`
-*[_type == "service"] {
-  _id,
-  title,
-  slug,
-  icon,
-  shortDescription,
-  features[] {
+  sectionSettings {
+    visibleSections[],
+    sectionOrder[]
+  },
+  seo {
     title,
     description,
-    icon
-  },
-  pricing[] {
-    name,
-    price,
-    interval,
-    features
+    keywords,
+    "ogImage": ogImage.asset->url
   }
 }`
 
-// About Page
-export const aboutPageQuery = groq`
-*[_type == "about"][0] {
-  mission {
-    title,
-    statement,
-    values[] {
-      title,
-      description,
-      icon
+export const navigationQuery = `*[_type == "navigation"][0] {
+  title,
+  logo {
+    text,
+    showText,
+    "image": image.asset->url,
+    showImage,
+    imageWidth,
+    showIcon
+  },
+  menuItems[] {
+    text,
+    href,
+    show,
+    isButton,
+    buttonVariant,
+    submenu[] {
+      text,
+      href,
+      show,
+      description
     }
   },
-  team {
-    title,
-    subtitle,
-    members[] {
-      name,
-      role,
-      bio,
-      image,
-      social
-    }
+  mobileSettings {
+    breakpoint,
+    showSocialLinks
   },
-  history {
-    title,
-    timeline[] {
-      year,
-      title,
-      description,
-      image
-    }
-  },
-  seo
+  socialLinks[] {
+    platform,
+    url,
+    show
+  }
 }`
+
+export const formQuery = `*[_type == "form" && slug.current == $slug][0] {
+  _id,
+  _type,
+  _createdAt,
+  _updatedAt,
+  _id,
+  _type,
+  name,
+  title,
+  description,
+  fields[] {
+    label,
+    name,
+    type,
+    placeholder,
+    required,
+    options[] {
+      _type,
+      value
+    },
+    validation {
+      pattern,
+      message
+    }
+  } | order(_key asc),
+  complianceFields[] {
+    type,
+    text,
+    required
+  },
+  submitButton {
+    text,
+    loadingText
+  },
+  successMessage {
+    title,
+    message
+  },
+  errorMessage {
+    title,
+    message
+  },
+  notifications {
+    adminEmail,
+    emailTemplate
+  }
+}`
+
+export const coalesce = (value: any, fallback: any) => `coalesce(${value}, ${fallback})`

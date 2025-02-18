@@ -1,0 +1,112 @@
+{
+  "title": "About FreightFlow Pro",
+  "mission": "To revolutionize the freight brokerage industry by providing specialized, technology-driven logistics solutions in flatbed, plastics, and pharmaceutical transportation, ensuring seamless supply chain operations while maintaining the highest standards of safety and efficiency.",
+  "history": [
+    {
+      "year": 2015,
+      "title": "Company Foundation",
+      "description": "Established with a vision to specialize in niche freight markets, focusing on quality service and industry expertise."
+    },
+    {
+      "year": 2018,
+      "title": "Specialized Division Launch",
+      "description": "Launched dedicated divisions for Flatbed, Plastics, and Pharmaceutical transportation, marking our commitment to specialized freight solutions."
+    },
+    {
+      "year": 2020,
+      "title": "Digital Transformation",
+      "description": "Implemented cutting-edge logistics technology platform to enhance tracking, reporting, and customer service capabilities."
+    },
+    {
+      "year": 2023,
+      "title": "Industry Recognition",
+      "description": "Received multiple industry awards for excellence in specialized freight services and customer satisfaction."
+    }
+  ],
+  "values": [
+    {
+      "title": "Safety First",
+      "description": "Maintaining the highest safety standards in transportation and handling of sensitive cargo.",
+      "icon": "shield"
+    },
+    {
+      "title": "Customer Excellence",
+      "description": "Delivering exceptional service through personalized solutions and proactive communication.",
+      "icon": "star"
+    },
+    {
+      "title": "Industry Expertise",
+      "description": "Leveraging deep knowledge in specialized freight sectors to provide optimal solutions.",
+      "icon": "award"
+    },
+    {
+      "title": "Innovation",
+      "description": "Continuously adopting new technologies and methods to improve service delivery.",
+      "icon": "globe"
+    }
+  ],
+  "team": [
+    {
+      "name": "Michael Anderson",
+      "role": "CEO & Founder",
+      "bio": "With over 20 years in logistics, Michael founded FreightFlow Pro to address the unique challenges in specialized freight transportation.",
+      "socialLinks": {
+        "linkedin": "https://linkedin.com/in/michael-anderson"
+      }
+    },
+    {
+      "name": "Sarah Chen",
+      "role": "Director of Specialized Operations",
+      "bio": "Sarah leads our specialized divisions, bringing 15 years of experience in pharmaceutical and sensitive cargo logistics.",
+      "socialLinks": {
+        "linkedin": "https://linkedin.com/in/sarah-chen"
+      }
+    }
+  ],
+  "stats": [
+    {
+      "label": "Years in Business",
+      "value": "8+",
+      "description": "Providing specialized freight solutions since 2015"
+    },
+    {
+      "label": "Successful Deliveries",
+      "value": "50,000+",
+      "description": "Across flatbed, plastics, and pharmaceutical shipments"
+    },
+    {
+      "label": "Customer Satisfaction",
+      "value": "98%",
+      "description": "Based on post-delivery surveys and feedback"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "ISO 9001:2015",
+      "issuer": "International Organization for Standardization",
+      "description": "Certified for quality management systems in logistics operations"
+    },
+    {
+      "name": "HAZMAT Certified",
+      "issuer": "Department of Transportation",
+      "description": "Certified for handling and transportation of hazardous materials"
+    }
+  ],
+  "callToAction": {
+    "title": "Ready to Experience Premium Freight Services?",
+    "description": "Let us handle your specialized transportation needs with the expertise and care they deserve.",
+    "primaryButton": {
+      "text": "Get a Quote",
+      "link": "/quote"
+    },
+    "secondaryButton": {
+      "text": "Contact Us",
+      "link": "/contact"
+    }
+  },
+  "seo": {
+    "title": "About FreightFlow Pro | Specialized Freight Brokerage Services",
+    "description": "Learn about FreightFlow Pro's expertise in flatbed, plastics, and pharmaceutical freight brokerage. Discover our history, values, and commitment to excellence in specialized logistics.",
+    "keywords": ["freight brokerage", "flatbed transport", "pharmaceutical logistics", "plastics shipping"]
+  }
+}

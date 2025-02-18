@@ -1,11 +1,63 @@
-import { createClient } from 'next-sanity'
+import { createClient, ClientConfig, ClientPerspective } from '@sanity/client'
+import imageUrlBuilder from '@sanity/image-url'
+import { token, projectId, dataset, apiVersion } from '../env'
+import { headers } from 'next/headers'
 
-import { apiVersion, dataset, projectId } from '../env'
+if (!projectId || !dataset) {
+  throw new Error('Required environment variables are not set');
+}
 
-export const client = createClient({
+const clientConfig: ClientConfig = {
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
-  token: "skMbBccnukBQsohz4kO3omP9Dxeqxp3AtyzXk8WL5Jr83UeKHCz34WhAKZgkaSF8yNkr9eqabuSLbpqEaVdL1ubaCYvYVQo9x08h9lDGHYmYH3iPxgqFhokgSI9kybw4xpz5K20GOiAgFEvkatLBnY9NPuGiKYOtrPbl3DPiKyu268XWe3bH",
+  useCdn: false,
+  token,
+  perspective: 'published' as ClientPerspective,
+  resultSourceMap: false,
+  withCredentials: true,
+  ignoreBrowserTokenWarning: true
+}
+
+// Create a client for fetching data
+export const client = createClient(clientConfig)
+
+// Helper function to get the client
+export const getClient = (preview: boolean = false) => ({
+  ...client,
+  fetch: async (query: string, params?: any) => {
+    try {
+      console.log('Sanity request:', {
+        projectId,
+        dataset,
+        apiVersion,
+        query,
+        params,
+        hasToken: !!token
+      });
+
+      const result = await client.fetch(query, params);
+      
+      console.log('Sanity response:', {
+        hasData: !!result,
+        type: result ? typeof result : 'null',
+        data: result
+      });
+
+      return result;
+    } catch (error) {
+      console.error('Sanity error:', error);
+      throw error;
+    }
+  }
 })
+
+// Set up image builder
+const builder = imageUrlBuilder({
+  projectId,
+  dataset
+})
+
+export function urlFor(source: any) {
+  return builder.image(source)
+}

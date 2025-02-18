@@ -1,0 +1,84 @@
+{
+  "navigation": {
+    "title": "Main Navigation",
+    "logo": {
+      "text": "FreightFlow Pro",
+      "showText": true,
+      "showImage": false,
+      "imageWidth": 150,
+      "logoHeight": 75,
+      "logoWidth": 150,
+      "showIcon": true
+    },
+    "menuItems": [
+      {
+        "text": "Home",
+        "href": "/",
+        "show": true
+      },
+      {
+        "text": "Services",
+        "href": "/services",
+        "show": true,
+        "submenu": [
+          {
+            "text": "Freight Brokerage",
+            "href": "/services#freight-brokerage",
+            "show": true,
+            "description": "Connect with reliable carriers for your shipping needs"
+          },
+          {
+            "text": "Load Planning",
+            "href": "/services#load-planning",
+            "show": true,
+            "description": "Optimize your shipments with strategic load planning"
+          },
+          {
+            "text": "Route Optimization",
+            "href": "/services#route-optimization",
+            "show": true,
+            "description": "Save time and fuel with optimized delivery routes"
+          }
+        ]
+      },
+      {
+        "text": "About",
+        "href": "/about",
+        "show": true
+      },
+      {
+        "text": "Blog",
+        "href": "/blog",
+        "show": true
+      },
+      {
+        "text": "Contact",
+        "href": "/contact",
+        "show": true
+      },
+      {
+        "text": "Get Quote",
+        "href": "/quote",
+        "show": true,
+        "isButton": true,
+        "buttonVariant": "default"
+      }
+    ],
+    "mobileSettings": {
+      "breakpoint": "lg",
+      "showSocialLinks": true
+    },
+    "socialLinks": [
+      {
+        "platform": "linkedin",
+        "url": "https://linkedin.com/company/freightflow-pro",
+        "show": true
+      },
+      {
+        "platform": "twitter",
+        "url": "https://twitter.com/freightflow_pro",
+        "show": true
+      }
+    ]
+  }
+}

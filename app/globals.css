@@ -73,6 +73,14 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .page-content {
+    @apply pt-24 min-h-[calc(100vh-theme(spacing.24))];
+  }
+
+  .page-section {
+    @apply relative w-full;
+  }
 }
 
 @layer components {
@@ -82,7 +90,7 @@
     shadow-[0_4px_20px_-2px_rgba(0,0,0,0.2)] 
     hover:dark:shadow-[0_8px_30px_-2px_rgba(29,78,216,0.5)] 
     hover:shadow-[0_8px_30px_-2px_rgba(0,0,0,0.3)] 
-    hover:-translate-y-2 hover:scale-[1.02];
+    hover:-translate-y-3 hover:scale-[1.05] hover:rotate-1;
   }
 
   .glass-effect {
@@ -90,13 +98,37 @@
   }
 
   .floating-nav {
-    @apply fixed top-4 left-4 right-4 z-50 rounded-full 
+    @apply rounded-full 
     border-2 border-primary/30
     dark:shadow-[0_4px_20px_-2px_rgba(29,78,216,0.3)] 
     shadow-[0_4px_20px_-2px_rgba(0,0,0,0.2)] 
-    backdrop-blur-lg bg-background/60;
-    animation: float 6s ease-in-out infinite;
+    backdrop-blur-lg bg-background/60
+    mt-4 z-50
+    inline-block;
   }
+
+  .nav-link {
+    @apply relative inline-block;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute left-0 bottom-[-2px] w-0 h-[2px] bg-primary 
+    transition-all duration-300 ease-out;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .main-content {
+    @apply mt-24 relative z-0;
+  }
+
+  /* Z-index layers */
+  .z-layer-base { z-index: 0; }
+  .z-layer-content { z-index: 10; }
+  .z-layer-nav { z-index: 50; }
 
   .card-border {
     @apply border-2 border-primary/30 
