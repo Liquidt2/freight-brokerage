@@ -264,7 +264,6 @@ export const singleBlogPostQuery = `*[_type == "post" && slug.current == $slug][
   }
 }`
 
-// Helper function to handle missing references
 export const homepageQuery = `*[_type == "homepage" && !(_id in path("drafts.**"))][0] {
   _id,
   _type,
@@ -398,28 +397,22 @@ export const navigationQuery = `*[_type == "navigation"][0] {
 export const formQuery = `*[_type == "form" && slug.current == $slug][0] {
   _id,
   _type,
-  _createdAt,
-  _updatedAt,
-  _id,
-  _type,
   name,
   title,
   description,
   fields[] {
-    label,
+    _key,
     name,
+    label,
     type,
     placeholder,
     required,
     options[] {
+      _key,
       _type,
       value
-    },
-    validation {
-      pattern,
-      message
     }
-  } | order(_key asc),
+  },
   complianceFields[] {
     type,
     text,

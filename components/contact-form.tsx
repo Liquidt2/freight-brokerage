@@ -20,6 +20,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 
+const phoneRegex = /^(\+1|1)?[-. ]?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
+
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -27,9 +29,17 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  phone: z.string().min(10, {
-    message: "Please enter a valid phone number.",
-  }),
+  phone: z.string()
+    .regex(phoneRegex, {
+      message: "Please enter a valid US phone number (e.g. (555) 123-4567)",
+    })
+    .transform(val => {
+      // Normalize phone number format
+      const digits = val.replace(/\D/g, '');
+      const match = digits.match(/^1?(\d{3})(\d{3})(\d{4})$/);
+      if (!match) return val;
+      return `(${match[1]}) ${match[2]}-${match[3]}`;
+    }),
   message: z.string().min(10, {
     message: "Message must be at least 10 characters.",
   }),

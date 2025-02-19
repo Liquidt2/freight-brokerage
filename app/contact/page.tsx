@@ -28,7 +28,7 @@ export default async function ContactPage() {
 
   if (!form) {
     return (
-      <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12 bg-background rounded-lg shadow">
           <h2 className="text-2xl font-bold mb-2">Form Not Found</h2>
           <p className="text-muted-foreground">Please add contact form content in the Sanity Studio.</p>
@@ -43,7 +43,7 @@ export default async function ContactPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-8">
       <ContactFormClient form={form} onSubmit={handleSubmit} />
     </div>
   )

@@ -4,7 +4,7 @@ import author from './author';
 import blockContent from './blockContent';
 import category from './category';
 import footer from './footer';
-import form from './form';
+import form, { formField, complianceField } from './form';
 import homepage from './homepage';
 import media from './media';
 import navigation from './navigation';
@@ -22,6 +22,8 @@ export const schemaTypes = [
   category,
   footer,
   form,
+  formField,
+  complianceField,
   homepage,
   media,
   navigation,

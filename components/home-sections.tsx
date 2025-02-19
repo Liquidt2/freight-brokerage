@@ -103,7 +103,7 @@ export function HeroSection({ data }: { data: HeroData }) {
     })
   }, [data])
   return (
-    <section className="relative py-20 lg:py-32 overflow-hidden bg-background mt-24">
+    <section className="relative py-12 lg:py-24 overflow-hidden bg-background mt-16">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background opacity-75 z-0" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.05)_1px,transparent_0)] bg-[size:20px_20px] opacity-50 z-0" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
@@ -162,7 +162,7 @@ export function IndustryFocusSection({ data }: { data: IndustryFocusData }) {
   }
 
   return (
-    <section className="py-20">
+    <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -219,7 +219,7 @@ export function FeaturesSection({ data }: { data: FeaturesData }) {
   }
 
   return (
-    <section className="py-20 bg-muted/50 relative">
+    <section className="py-12 bg-muted/50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -254,7 +254,7 @@ export function FeaturesSection({ data }: { data: FeaturesData }) {
 
 export function HowItWorksSection({ data }: { data: HowItWorksData }) {
   return (
-    <section className="py-20 relative bg-background">
+    <section className="py-12 relative bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -287,7 +287,7 @@ export function HowItWorksSection({ data }: { data: HowItWorksData }) {
 
 export function TestimonialsSection({ data }: { data: TestimonialsData }) {
   return (
-    <section className="py-20 bg-muted/50">
+    <section className="py-12 bg-muted/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -320,7 +320,7 @@ export function TestimonialsSection({ data }: { data: TestimonialsData }) {
 
 export function MapSection({ data }: { data: MapSectionData }) {
   return (
-    <section className="py-20">
+    <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -349,7 +349,7 @@ export function MapSection({ data }: { data: MapSectionData }) {
 
 export function FAQSection({ data }: { data: FAQData }) {
   return (
-    <section className="py-20 bg-muted/50">
+    <section className="py-12 bg-muted/50">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -372,7 +372,7 @@ export function FAQSection({ data }: { data: FAQData }) {
 
 export function NewsSection({ data }: { data: NewsData }) {
   return (
-    <section className="py-20">
+    <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -412,7 +412,7 @@ export function CTASection({ data }: { data: CTAData }) {
     })
   }, [data])
   return (
-    <section className="py-20 relative bg-background">
+    <section className="py-12 relative bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           className="glow-effect card-hover-effect bg-primary text-primary-foreground rounded-lg p-8 md:p-12 lg:p-16 relative overflow-hidden shadow-lg"

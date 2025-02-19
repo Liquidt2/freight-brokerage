@@ -1,22 +1,22 @@
 import { defineField, defineType } from 'sanity';
 
-// Form field type definition (not exported)
-const formField = {
+// Form field type definition
+const formField = defineType({
   name: 'formField',
   title: 'Form Field',
-  type: 'object',
+  type: 'document',
   fields: [
     defineField({
       name: 'label',
       title: 'Label',
       type: 'string',
-      validation: Rule => Rule.required().min(2).error("Label is required and must be at least 2 characters."),
+      validation: Rule => Rule.required().min(2),
     }),
     defineField({
       name: 'name',
       title: 'Field Name',
       type: 'string',
-      validation: Rule => Rule.required().error("Field name is required."),
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'type',
@@ -32,9 +32,14 @@ const formField = {
           { title: 'Checkbox', value: 'checkbox' },
           { title: 'Radio', value: 'radio' },
           { title: 'Date', value: 'date' },
+          { title: 'Number', value: 'number' },
+          { title: 'State', value: 'state' },
+          { title: 'Truck & Trailer Type', value: 'truckTrailerType' },
+          { title: 'ZIP Code', value: 'zipCode' },
+          { title: 'Conditional', value: 'conditional' },
         ],
       },
-      validation: Rule => Rule.required().error("Field type is required."),
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'placeholder',
@@ -55,37 +60,64 @@ const formField = {
         type: 'object',
         name: 'option',
         fields: [
-          {
+          defineField({
             name: 'value',
             type: 'string',
             title: 'Option Value'
-          }
+          })
         ],
-        preview: {
-          select: {
-            title: 'value'
-          }
-        }
       }],
-      options: {
-        sortable: true
-      },
-      hidden: ({ parent }) => !['select', 'radio'].includes(parent?.type || ''),
+      hidden: ({ parent }) => !['select', 'radio', 'state'].includes(parent?.type || ''),
+    }),
+    defineField({
+      name: 'validation',
+      title: 'Validation',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'min',
+          title: 'Minimum Value',
+          type: 'number',
+        }),
+        defineField({
+          name: 'max',
+          title: 'Maximum Value',
+          type: 'number',
+        }),
+        defineField({
+          name: 'pattern',
+          title: 'Pattern',
+          type: 'string',
+          description: 'Regular expression pattern for validation',
+        }),
+        defineField({
+          name: 'message',
+          title: 'Error Message',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'unit',
+      title: 'Unit',
+      type: 'string',
+      description: 'Unit of measurement (e.g., lbs, ft, °F)',
+      hidden: ({ parent }) => !['number'].includes(parent?.type || ''),
     }),
   ],
-};
+});
 
-// Compliance field type definition (not exported)
-const complianceField = {
+// Compliance field type definition
+const complianceField = defineType({
   name: 'complianceField',
   title: 'Compliance Field',
-  type: 'object',
+  type: 'document',
   fields: [
     defineField({
       name: 'text',
       title: 'Consent Text',
       type: 'string',
-      validation: Rule => Rule.required().error("Consent text is required."),
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'type',
@@ -98,7 +130,7 @@ const complianceField = {
           { title: 'Opt-out', value: 'opt-out' },
         ],
       },
-      validation: Rule => Rule.required().error("Compliance type is required."),
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'required',
@@ -107,7 +139,7 @@ const complianceField = {
       initialValue: true,
     }),
   ],
-};
+});
 
 // Form schema
 const formSchema = defineType({
@@ -119,20 +151,20 @@ const formSchema = defineType({
       name: 'name',
       title: 'Form Name',
       type: 'string',
-      validation: Rule => Rule.required().min(3).error("Form name is required and must be at least 3 characters."),
+      validation: Rule => Rule.required().min(3),
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
       options: { source: 'name', maxLength: 100 },
-      validation: Rule => Rule.required().error("Slug is required."),
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'title',
       title: 'Form Title',
       type: 'string',
-      validation: Rule => Rule.required().error("Form title is required."),
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'description',
@@ -143,20 +175,111 @@ const formSchema = defineType({
       name: 'fields',
       title: 'Form Fields',
       type: 'array',
-      of: [formField],
-      options: {
-        sortable: true
-      },
-      validation: Rule => Rule.required().min(1).error("At least one form field is required."),
+      of: [{
+        type: 'object',
+        name: 'field',
+        fields: [
+          defineField({
+            name: 'label',
+            title: 'Label',
+            type: 'string',
+            validation: Rule => Rule.required(),
+          }),
+          defineField({
+            name: 'name',
+            title: 'Field Name',
+            type: 'string',
+            validation: Rule => Rule.required(),
+          }),
+          defineField({
+            name: 'type',
+            title: 'Field Type',
+            type: 'string',
+            options: {
+              list: [
+                { title: 'Text', value: 'text' },
+                { title: 'Email', value: 'email' },
+                { title: 'Phone', value: 'tel' },
+                { title: 'Textarea', value: 'textarea' },
+                { title: 'Select', value: 'select' },
+                { title: 'Checkbox', value: 'checkbox' },
+                { title: 'Radio', value: 'radio' },
+                { title: 'Date', value: 'date' },
+                { title: 'Number', value: 'number' },
+                { title: 'State', value: 'state' },
+                { title: 'Truck & Trailer Type', value: 'truckTrailerType' },
+                { title: 'ZIP Code', value: 'zipCode' },
+              ],
+            },
+            validation: Rule => Rule.required(),
+          }),
+          defineField({
+            name: 'placeholder',
+            title: 'Placeholder',
+            type: 'string',
+          }),
+          defineField({
+            name: 'required',
+            title: 'Required',
+            type: 'boolean',
+            initialValue: false,
+          }),
+          defineField({
+            name: 'options',
+            title: 'Options',
+            type: 'array',
+            of: [{
+              type: 'object',
+              name: 'option',
+              fields: [
+                defineField({
+                  name: 'value',
+                  type: 'string',
+                  title: 'Option Value'
+                })
+              ],
+            }],
+            hidden: ({ parent }) => !['select', 'radio', 'state', 'truckTrailerType'].includes(parent?.type || ''),
+          }),
+        ],
+      }],
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'complianceFields',
       title: 'Compliance Fields',
       type: 'array',
-      of: [complianceField],
-      options: {
-        sortable: true
-      },
+      of: [{
+        type: 'object',
+        name: 'complianceField',
+        fields: [
+          defineField({
+            name: 'text',
+            title: 'Consent Text',
+            type: 'string',
+            validation: Rule => Rule.required(),
+          }),
+          defineField({
+            name: 'type',
+            title: 'Type',
+            type: 'string',
+            options: {
+              list: [
+                { title: 'Consent', value: 'consent' },
+                { title: 'Opt-in', value: 'opt-in' },
+                { title: 'Opt-out', value: 'opt-out' },
+              ],
+            },
+            validation: Rule => Rule.required(),
+          }),
+          defineField({
+            name: 'required',
+            title: 'Required',
+            type: 'boolean',
+            initialValue: true,
+          }),
+        ],
+      }],
       description: "Legal compliance fields like privacy policy agreements and SMS opt-in/out.",
     }),
     defineField({
@@ -251,3 +374,4 @@ const formSchema = defineType({
 });
 
 export default formSchema;
+export { formField, complianceField };

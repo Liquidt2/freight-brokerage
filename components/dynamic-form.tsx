@@ -47,7 +47,9 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
 
   // Dynamically build form schema
   const schemaFields = form.fields.reduce<Record<string, z.ZodTypeAny>>((acc, field) => {
-    if (field.type === 'radio' && field.options?.some(opt => opt.value === 'Yes' || opt.value === 'No')) {
+    if (field.type === 'radio' && field.options?.some(opt => 
+      typeof opt === 'object' ? opt.value === 'Yes' || opt.value === 'No' : opt === 'Yes' || opt === 'No'
+    )) {
       // Handle Yes/No radio fields as booleans
       acc[field.name] = field.required
         ? z.boolean({ required_error: `${field.label} is required` })
@@ -78,10 +80,10 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
 
   // Add compliance fields to schema if they exist
   form.complianceFields?.forEach((field) => {
-    const fieldName = `compliance_${field.type}` as const
+    const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type
     if (field.required) {
       schemaFields[fieldName] = z.literal(true, {
-        errorMap: () => ({ message: 'This field is required' }),
+        errorMap: () => ({ message: field.text }),
       })
     } else {
       schemaFields[fieldName] = z.boolean().optional()
@@ -97,7 +99,10 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
       {}
     ),
     ...(form.complianceFields?.reduce<Record<string, boolean>>(
-      (acc, field) => ({ ...acc, [`compliance_${field.type}`]: false }),
+      (acc, field) => {
+        const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type
+        return { ...acc, [fieldName]: false }
+      },
       {}
     ) ?? {}),
   }
@@ -147,7 +152,9 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
               <FormItem>
                 <FormLabel>{field.label}</FormLabel>
                 <FormControl>
-                  {field.type === 'radio' && field.options?.some(opt => opt.value === 'Yes' || opt.value === 'No') ? (
+                  {field.type === 'radio' && field.options?.some(opt => 
+                    typeof opt === 'object' ? opt.value === 'Yes' || opt.value === 'No' : opt === 'Yes' || opt === 'No'
+                  ) ? (
                     <RadioGroup
                       onValueChange={(value) => formField.onChange(value === 'Yes')}
                       defaultValue={formField.value ? 'Yes' : 'No'}
@@ -179,7 +186,7 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
                         {Array.isArray(field.options) ? (
                           field.options.map((option) => (
                             <SelectItem 
-                              key={typeof option === 'string' ? option : option.value} 
+                              key={typeof option === 'string' ? option : option.value}
                               value={typeof option === 'string' ? option : option.value}
                             >
                               {typeof option === 'string' ? option : option.value}
@@ -240,7 +247,7 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
           <FormField
             key={field.type}
             control={formInstance.control}
-            name={`compliance_${field.type}`}
+            name={field.type === 'consent' ? 'termsAccepted' : field.type}
             render={({ field: formField }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                 <FormControl>
