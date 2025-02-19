@@ -9,7 +9,7 @@ export default defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: Rule => Rule.required(),
+      validation: Rule => Rule.required().min(5).max(200),
     }),
     defineField({
       name: 'slug',
@@ -18,18 +18,33 @@ export default defineType({
       options: {
         source: 'title',
         maxLength: 96,
+        slugify: (input: string | undefined) => {
+          if (!input) return ''
+          return input
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-]+/g, '')
+            .slice(0, 96)
+        }
       },
-      validation: Rule => Rule.required(),
+      validation: Rule => Rule.required()
+        .custom(slug => {
+          if (typeof slug === 'undefined') return true
+          if (!slug?.current) return true
+          const isValid = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug.current)
+          return isValid ? true : 'Invalid slug format. Use lowercase letters, numbers, and hyphens only.'
+        }),
     }),
     defineField({
       name: 'author',
       title: 'Author',
       type: 'reference',
       to: { type: 'author' },
+      validation: Rule => Rule.required(),
     }),
     defineField({
-      name: 'mainImage',
-      title: 'Main Image',
+      name: 'featuredImage',
+      title: 'Featured Image',
       type: 'image',
       options: {
         hotspot: true,
@@ -39,6 +54,7 @@ export default defineType({
           name: 'alt',
           type: 'string',
           title: 'Alternative Text',
+          validation: Rule => Rule.required(),
         },
       ],
     }),
@@ -47,6 +63,7 @@ export default defineType({
       title: 'Categories',
       type: 'array',
       of: [{ type: 'reference', to: { type: 'category' } }],
+      validation: Rule => Rule.min(1).unique(),
     }),
     defineField({
       name: 'industry',
@@ -68,12 +85,20 @@ export default defineType({
       options: {
         list: [
           { title: 'Draft', value: 'draft' },
+          { title: 'Pending Review', value: 'pending_review' },
           { title: 'Published', value: 'published' },
           { title: 'Archived', value: 'archived' }
         ],
       },
       initialValue: 'draft',
       validation: Rule => Rule.required(),
+    }),
+    defineField({
+      name: 'autoPublish',
+      title: 'Auto-Publish',
+      type: 'boolean',
+      description: 'Enable automatic publishing via n8n workflow',
+      initialValue: false,
     }),
     defineField({
       name: 'publishedAt',
@@ -92,7 +117,14 @@ export default defineType({
       name: 'excerpt',
       title: 'Excerpt',
       type: 'text',
-      validation: Rule => Rule.max(200),
+      validation: Rule => Rule.required().min(10).max(160)
+        .warning('Optimal length for SEO is between 50 and 160 characters'),
+    }),
+    defineField({
+      name: 'source',
+      title: 'Source URL',
+      type: 'url',
+      description: 'Original source URL if content is repurposed',
     }),
     defineField({
       name: 'readTime',
@@ -137,6 +169,7 @@ export default defineType({
       name: 'body',
       title: 'Body',
       type: 'blockContent',
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'relatedPosts',
@@ -177,7 +210,7 @@ export default defineType({
     select: {
       title: 'title',
       author: 'author.name',
-      media: 'mainImage',
+      media: 'featuredImage',
       status: 'status',
       publishedAt: 'publishedAt'
     },

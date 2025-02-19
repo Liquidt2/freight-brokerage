@@ -4,6 +4,8 @@ import { visionTool } from '@sanity/vision'
 import { codeInput } from '@sanity/code-input'
 import { schemaTypes } from '@/schemas'
 import { apiVersion, dataset, projectId } from '@/lib/env'
+import { webhooksPlugin } from '@/lib/sanity/webhooks'
+import { deskStructure } from '@/lib/sanity/desk-structure'
 
 // Ensure projectId & dataset exist
 if (!projectId || !dataset) {
@@ -19,9 +21,12 @@ export const studioConfig = defineConfig({
   basePath: '/studio',  // ✅ This ensures it mounts at `/studio`
   useCdn: false, // ✅ Ensure fresh API calls
   plugins: [
-    deskTool(),
+    deskTool({
+      structure: deskStructure
+    }),
     visionTool({ defaultApiVersion: apiVersion }),
-    codeInput()
+    codeInput(),
+    webhooksPlugin
   ],
   schema: {
     types: schemaTypes,
