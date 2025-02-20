@@ -104,6 +104,7 @@ const LOADING_METHODS = [
 export default function QuoteForm({ onSubmit: handleSubmit }: QuoteFormProps) {
   const [step, setStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -228,6 +229,7 @@ export default function QuoteForm({ onSubmit: handleSubmit }: QuoteFormProps) {
 
   async function onSubmit(values: FormSchema) {
     try {
+      setSubmitError(null); // Clear any previous errors
       if (!isLastStep) {
         // Clear any existing errors
         form.clearErrors()
@@ -273,7 +275,9 @@ export default function QuoteForm({ onSubmit: handleSubmit }: QuoteFormProps) {
       form.reset()
       setStep(0)
     } catch (error) {
-      toast.error("Failed to submit quote request. Please try again.")
+      const errorMessage = error instanceof Error ? error.message : "Failed to submit quote request. Please try again.";
+      toast.error(errorMessage);
+      setSubmitError(errorMessage); // Set the error message for display
     } finally {
       setIsSubmitting(false)
     }
@@ -337,16 +341,23 @@ export default function QuoteForm({ onSubmit: handleSubmit }: QuoteFormProps) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Show form errors */}
-              {Object.keys(form.formState.errors).length > 0 && (
+              {(Object.keys(form.formState.errors).length > 0 || submitError) && (
                 <div className="bg-destructive/15 text-destructive px-4 py-2 rounded-md mb-6">
-                  <p className="font-medium">Please fix the following errors:</p>
-                  <ul className="list-disc list-inside">
+                  {Object.keys(form.formState.errors).length > 0 && (
+                    <>
+                      <p className="font-medium">Please fix the following errors:</p>
+                      <ul className="list-disc list-inside">
                     {Object.entries(form.formState.errors).map(([field, error]) => (
                       <li key={field}>
                         {error?.message}
                       </li>
                     ))}
-                  </ul>
+                      </ul>
+                    </>
+                  )}
+                  {submitError && (
+                    <p className="font-medium text-destructive">{submitError}</p>
+                  )}
                 </div>
               )}
 

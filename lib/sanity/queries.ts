@@ -1,373 +1,17 @@
-export const aboutQuery = `*[_type == "about"][0] {
-  title,
-  mission,
-  history[] {
-    title,
-    description,
-    year
-  },
-  values[] {
-    title,
-    description,
-    icon
-  },
-  "seo": seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
+import { groq } from 'next-sanity'
 
-export const servicesQuery = `*[_type == "service"] {
-  title,
-  "slug": slug.current,
-  description,
-  icon,
-  features[] {
-    title,
-    description,
-    details
-  },
-  benefits[] {
-    title,
-    description,
-    icon
-  },
-  requirements[] {
-    title,
-    description,
-    items
-  },
-  coverage {
-    areas,
-    restrictions
-  },
-  pricing {
-    model,
-    description,
-    factors
-  },
-  featured,
-  "seo": seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
-
-export const policyQuery = `*[_type == "policy"][0] {
-  title,
-  lastUpdated,
-  introduction,
-  content[] {
-    sectionTitle,
-    content[] {
-      ...,
-      _type == "block" => {
-        ...,
-        markDefs[] {
-          ...,
-          _type == "internalLink" => {
-            "slug": @.reference->slug.current
-          }
-        }
-      }
-    },
-    subsections[] {
-      title,
-      content[] {
-        ...,
-        _type == "block" => {
-          ...,
-          markDefs[] {
-            ...,
-            _type == "internalLink" => {
-              "slug": @.reference->slug.current
-            }
-          }
-        }
-      }
-    }
-  },
-  contactInformation {
-    email,
-    phone,
-    address
-  },
-  effectiveDate,
-  "seo": seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
-
-export const termsQuery = `*[_type == "terms"][0] {
-  title,
-  lastUpdated,
-  introduction,
-  content[] {
-    sectionTitle,
-    content[] {
-      ...,
-      _type == "block" => {
-        ...,
-        markDefs[] {
-          ...,
-          _type == "internalLink" => {
-            "slug": @.reference->slug.current
-          }
-        }
-      }
-    },
-    subsections[] {
-      title,
-      content[] {
-        ...,
-        _type == "block" => {
-          ...,
-          markDefs[] {
-            ...,
-            _type == "internalLink" => {
-              "slug": @.reference->slug.current
-            }
-          }
-        }
-      }
-    }
-  },
-  serviceTerms[] {
-    title,
-    description,
-    conditions
-  },
-  liabilityLimitations[] {
-    title,
-    description
-  },
-  disputeResolution {
-    process,
-    jurisdiction,
-    arbitration
-  },
-  terminationClauses[] {
-    title,
-    conditions,
-    consequences
-  },
-  contactInformation {
-    email,
-    phone,
-    address
-  },
-  effectiveDate,
-  "seo": seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
-
-export const footerQuery = `*[_type == "footer"][0] {
-  companyInfo {
-    name,
-    showName,
-    "logo": logo.asset->url,
-    showLogo,
-    logoWidth,
-    address,
-    showAddress,
-    phone,
-    showPhone,
-    email,
-    showEmail
-  },
-  socialLinks[] {
-    platform,
-    url,
-    show
-  },
-  links[] {
-    title,
-    url,
-    show
-  },
-  copyright,
-  showCopyright,
-  "seo": seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
-
-export const blogPostsQuery = `*[_type == "post"] {
-  title,
-  "slug": slug.current,
-  body,
-  "author": author->{
-    name,
-    "image": image.asset->url
-  },
-  publishedAt,
-  readTime,
-  "categories": categories[]->{ title },
-  industry,
-  mainImage {
-    asset->,
-    alt
-  },
-  excerpt,
-  featured,
-  "seo": seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
-
-export const singleBlogPostQuery = `*[_type == "post" && slug.current == $slug][0] {
-  title,
-  "slug": slug.current,
-  body[] {
-    ...,
-    _type == "image" => {
-      ...,
-      "asset": asset->
-    }
-  },
-  "author": author->{
-    name,
-    "image": image.asset->url
-  },
-  publishedAt,
-  readTime,
-  "categories": categories[]->{ title },
-  industry,
-  mainImage {
-    asset->,
-    alt
-  },
-  excerpt,
-  featured,
-  "seo": seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
-
-export const homepageQuery = `*[_type == "homepage" && !(_id in path("drafts.**"))][0] {
-  _id,
-  _type,
-  hero {
-    title,
-    subtitle,
-    primaryButton {
-      text,
-      link
-    },
-    secondaryButton {
-      text,
-      link
-    }
-  },
-  industryFocus {
-    title,
-    subtitle,
-    industries[] {
-      title,
-      description,
-      icon
-    }
-  },
-  features {
-    title,
-    subtitle,
-    featuresList[] {
-      title,
-      description,
-      icon
-    }
-  },
-  howItWorks {
-    title,
-    subtitle,
-    steps[] {
-      title,
-      description,
-      stepNumber
-    }
-  },
-  blogSection {
-    title,
-    subtitle,
-    showLatestPosts
-  },
-  testimonials {
-    title,
-    subtitle,
-    testimonialsList[] {
-      quote,
-      author,
-      company
-    }
-  },
-  mapSection {
-    title,
-    subtitle,
-    coverageAreas
-  },
-  faq {
-    title,
-    subtitle,
-    questions[] {
-      question,
-      answer
-    }
-  },
-  newsSection {
-    title,
-    subtitle,
-    newsItems[] {
-      title,
-      content,
-      date
-    }
-  },
-  cta {
-    title,
-    subtitle,
-    buttonText,
-    buttonLink
-  },
-  sectionSettings {
-    visibleSections[],
-    sectionOrder[]
-  },
-  seo {
-    title,
-    description,
-    keywords,
-    "ogImage": ogImage.asset->url
-  }
-}`
-
-export const navigationQuery = `*[_type == "navigation"][0] {
+// Navigation query
+export const navigationQuery = groq`*[_type == "navigation"][0] {
   title,
   logo {
     text,
     showText,
-    "image": image.asset->url,
+    image,
     showImage,
+    imageHeight,
     imageWidth,
+    logoHeight,
+    logoWidth,
     showIcon
   },
   menuItems[] {
@@ -394,28 +38,54 @@ export const navigationQuery = `*[_type == "navigation"][0] {
   }
 }`
 
-export const formQuery = `*[_type == "form" && slug.current == $slug][0] {
-  _id,
-  _type,
-  name,
+// Footer query
+export const footerQuery = groq`*[_type == "footer" && defined(companyInfo)][0] {
+  companyInfo {
+    name,
+    "logo": logo.asset->url,
+    logoWidth,
+    showLogo,
+    showName,
+    address,
+    phone,
+    email,
+    showAddress,
+    showPhone,
+    showEmail
+  },
+  socialLinks[] {
+    platform,
+    url,
+    show
+  },
+  copyright,
+  showCopyright
+}`
+
+// Form query
+export const formQuery = groq`*[_type == "form" && status == "published" && slug.current == $slug][0] {
   title,
   description,
   fields[] {
     _key,
-    name,
     label,
     type,
-    placeholder,
+    name,
     required,
     options[] {
       _key,
-      _type,
       value
+    },
+    placeholder,
+    validation {
+      pattern,
+      message
     }
   },
   complianceFields[] {
-    type,
+    _key,
     text,
+    type,
     required
   },
   submitButton {
@@ -432,8 +102,155 @@ export const formQuery = `*[_type == "form" && slug.current == $slug][0] {
   },
   notifications {
     adminEmail,
-    emailTemplate
+    emailTemplate {
+      subject,
+      sections[] {
+        _key,
+        title,
+        fields[] {
+          _key,
+          label,
+          value
+        }
+      },
+      footer
+    }
   }
 }`
 
-export const coalesce = (value: any, fallback: any) => `coalesce(${value}, ${fallback})`
+// Terms & Privacy queries
+export const termsQuery = groq`*[_type == "terms"][0] {
+  title,
+  content,
+  lastUpdated,
+  seo
+}`
+
+export const policyQuery = groq`*[_type == "policy"][0] {
+  title,
+  content,
+  lastUpdated,
+  seo
+}`
+
+// Homepage query
+export const homepageQuery = groq`*[_type == "homepage"][0] {
+  hero,
+  industryFocus,
+  features,
+  howItWorks,
+  testimonials,
+  mapSection,
+  faq,
+  newsSection,
+  cta,
+  sectionSettings,
+  seo
+}`
+
+// Services queries
+export const servicesListQuery = groq`*[_type == "service" && status == "published" && defined(title) && defined(slug.current) && visibility.showInLists == true] | order(visibility.featured desc) {
+  title,
+  "slug": slug.current,
+  description,
+  icon,
+  visibility,
+  features[] {
+    title,
+    description,
+    details
+  },
+  benefits[] {
+    title,
+    description,
+    icon
+  }
+}`
+
+export const serviceBySlugQuery = groq`*[_type == "service" && status == "published" && slug.current == $slug][0] {
+  title,
+  description,
+  icon,
+  features,
+  benefits,
+  requirements,
+  coverage,
+  pricing,
+  faqs,
+  callToAction,
+  seo
+}`
+
+// About page query
+export const aboutQuery = groq`*[_type == "about" && status == "published"][0] {
+  title,
+  mission,
+  history,
+  values,
+  team,
+  stats,
+  certifications,
+  callToAction,
+  seo
+}`
+
+// Blog queries
+export const blogListQuery = groq`{
+  "posts": *[_type == "post" && status == "published" && defined(title) && defined(slug.current) && visibility.showInLists == true] | order(publishedAt desc) [$start...$end] {
+    title,
+    slug,
+    excerpt,
+    featuredImage,
+    author->,
+    categories[]->,
+    publishedAt,
+    readTime,
+    visibility
+  },
+  "total": count(*[_type == "post" && status == "published" && visibility.showInLists == true])
+}`
+
+export const postBySlugQuery = groq`*[_type == "post" && status == "published" && slug.current == $slug][0] {
+  title,
+  body,
+  featuredImage,
+  author->,
+  categories[]->,
+  publishedAt,
+  readTime,
+  relatedPosts[]->,
+  callToAction,
+  seo
+}`
+
+// Existing chat queries...
+
+export const chatSettingsQuery = groq`*[_type == "chatSettings"][0] {
+  title,
+  systemPrompt,
+  maxFreeMessages,
+  styling {
+    primaryColor,
+    bubbleSize,
+    position
+  },
+  leadForm {
+    companyFieldRequired,
+    nameLabel,
+    emailLabel,
+    companyLabel
+  },
+  messages {
+    welcomeMessage,
+    leadFormIntro,
+    maxMessagesReached
+  }
+}`
+
+export const chatLeadQuery = groq`*[_type == "chatLead" && email == $email][0] {
+  _id,
+  name,
+  email,
+  company,
+  conversations
+}`

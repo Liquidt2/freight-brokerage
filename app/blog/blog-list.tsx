@@ -1,25 +1,27 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Calendar, User, Clock, ArrowRight, Truck } from "lucide-react"
+import { Calendar, User, Clock, ArrowRight, Truck, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
 import { format } from "date-fns"
 import { urlFor } from "@/lib/sanity/image"
+import { useBlogList, BlogPost } from "@/hooks/use-blog-list"
 
-type BlogPost = {
-  slug: string
-  title: string
-  body: any
-  author: {
-    name: string
-    image?: string
+interface BlogListProps {
+  initialData: {
+    posts: BlogPost[]
+    total: number
   }
-  publishedAt: string
-  readTime: number
-  categories: { title: string }[]
+}
+
+// Extend the imported BlogPost type
+interface ExtendedBlogPost extends BlogPost {
+  slug: {
+    current: string
+  }
   mainImage: {
     _type: string
     asset: {
@@ -27,15 +29,29 @@ type BlogPost = {
       _type: string
     }
   }
-  excerpt: string
   industry: string
 }
 
-export default function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
+export default function BlogList({ initialData }: BlogListProps) {
+  const { posts, isLoading, error, hasMore, loadMore } = useBlogList(initialData)
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [subscribing, setSubscribing] = useState(false)
 
-  if (!initialPosts?.length) {
+  // Cast posts to ExtendedBlogPost array since we know the actual shape from Sanity
+  const extendedPosts = posts as unknown as ExtendedBlogPost[]
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center py-12 bg-destructive/10 rounded-lg shadow border border-destructive/20">
+          <h2 className="text-2xl font-bold mb-2 text-destructive">Error Loading Posts</h2>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!posts?.length) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="text-center py-12 bg-background rounded-lg shadow">
@@ -47,13 +63,13 @@ export default function BlogList({ initialPosts }: { initialPosts: BlogPost[] })
   }
 
   // Extract unique categories from blog posts
-  const categories = ["All", ...Array.from(new Set(initialPosts.map(post => post.industry)))]
+  const categories = ["All", ...Array.from(new Set(extendedPosts.map(post => post.industry)))]
 
   const filteredPosts = selectedCategory === "All"
-    ? initialPosts
-    : initialPosts.filter(post => post.industry === selectedCategory);
+    ? extendedPosts
+    : extendedPosts.filter(post => post.industry === selectedCategory);
 
-  const featuredPost = initialPosts[0];
+  const featuredPost = extendedPosts[0];
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -74,7 +90,7 @@ export default function BlogList({ initialPosts }: { initialPosts: BlogPost[] })
         transition={{ duration: 0.5 }}
         className="relative rounded-lg overflow-hidden group card-border"
       >
-        <Link href={`/blog/${featuredPost.slug}`} className="block">
+          <Link href={`/blog/${featuredPost.slug.current}`} className="block">
           <div className="relative h-[400px]">
             {featuredPost.mainImage ? (
                 <Image
@@ -127,7 +143,7 @@ export default function BlogList({ initialPosts }: { initialPosts: BlogPost[] })
         transition={{ duration: 0.5, delay: 0.2 }}
         className="flex flex-wrap gap-2"
       >
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <Button
             key={category}
             variant={category === selectedCategory ? "default" : "outline"}
@@ -159,7 +175,7 @@ export default function BlogList({ initialPosts }: { initialPosts: BlogPost[] })
               whileHover={{ scale: 1.05, y: -8 }}
               className="group bg-background rounded-lg overflow-hidden card-border"
             >
-              <Link href={`/blog/${post.slug}`} className="block h-full">
+              <Link href={`/blog/${post.slug.current}`} className="block h-full">
                 <div className="relative h-48 overflow-hidden">
                   {post.mainImage ? (
                     <Image
@@ -200,6 +216,27 @@ export default function BlogList({ initialPosts }: { initialPosts: BlogPost[] })
             </motion.article>
           ))}
         </motion.div>
+
+        {hasMore && (
+          <div className="flex justify-center mt-8">
+            <Button
+              onClick={() => loadMore()}
+              disabled={isLoading}
+              variant="outline"
+              size="lg"
+              className="rounded-full"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Load More Posts'
+              )}
+            </Button>
+          </div>
+        )}
       </AnimatePresence>
 
       {/* Newsletter Section */}

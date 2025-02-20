@@ -2,9 +2,10 @@
 
 import { getClient } from '@/lib/sanity/client';
 import { formQuery } from '@/lib/sanity/queries';
+import { getServerEnv } from '@/lib/env/server';
 import nodemailer from 'nodemailer';
 
-interface FormSubmission {
+export interface FormSubmission {
   formId: string;
   data: Record<string, any>;
 }
@@ -23,9 +24,25 @@ interface ComplianceField {
   required?: boolean;
 }
 
+interface EmailTemplate {
+  subject: string;
+  sections: {
+    title: string;
+    fields: {
+      label: string;
+      value: string;
+    }[];
+  }[];
+  footer?: string;
+}
+
 interface FormConfig {
   fields: FormField[];
   complianceFields?: ComplianceField[];
+  notifications?: {
+    adminEmail?: string;
+    emailTemplate?: EmailTemplate;
+  };
 }
 
 class FormSubmissionError extends Error {
@@ -36,9 +53,131 @@ class FormSubmissionError extends Error {
   }
 }
 
-export async function submitForm({ formId, data }: FormSubmission): Promise<void> {
+function formatEmailContent(template: EmailTemplate, data: Record<string, any>): { subject: string; text: string } {
+  const formatValue = (value: string): string => {
+    return value.replace(/\{(\w+)(?:\?([^}]+))?\}/g, (match, field, condition) => {
+      if (condition) {
+        const [truePart, falsePart = ''] = condition.split(':');
+        return data[field] ? truePart : falsePart;
+      }
+      if (field.endsWith('Date')) {
+        return data[field] ? new Date(data[field]).toLocaleDateString() : 'N/A';
+      }
+      if (typeof data[field] === 'boolean') {
+        return data[field] ? 'Yes' : 'No';
+      }
+      return data[field] || 'N/A';
+    });
+  };
+
+  const subject = formatValue(template.subject);
+  
+  let content = 'Dear Admin,\n\n';
+  
+  // Add sections
+  template.sections.forEach(section => {
+    content += `${section.title}\n${'-'.repeat(section.title.length)}\n`;
+    section.fields.forEach(field => {
+      const formattedValue = formatValue(field.value);
+      if (formattedValue) {
+        content += `${field.label}: ${formattedValue}\n`;
+      }
+    });
+    content += '\n';
+  });
+
+  // Add footer if present
+  if (template.footer) {
+    content += `\n${formatValue(template.footer)}`;
+  }
+
+  return { subject, text: content.trim() };
+}
+
+function getDefaultEmailTemplate(formId: string): EmailTemplate {
+  if (formId === 'request-quote') {
+    return {
+      subject: "New Quote Request from {companyName}",
+      sections: [
+        {
+          title: "CONTACT DETAILS",
+          fields: [
+            { label: "Company", value: "{companyName}" },
+            { label: "Contact", value: "{contactName}" },
+            { label: "Email", value: "{email}" },
+            { label: "Phone", value: "{phone}" }
+          ]
+        },
+        {
+          title: "SHIPMENT DETAILS",
+          fields: [
+            { label: "From", value: "{originCity}, {originState} {zipCode}" },
+            { label: "To", value: "{destinationCity}, {destinationState} {destinationZip}" },
+            { label: "Pickup", value: "{originPickupDate}" },
+            { label: "Delivery", value: "{deliveryDate}" }
+          ]
+        },
+        {
+          title: "LOAD DETAILS",
+          fields: [
+            { label: "Type", value: "{truckTrailerType}" },
+            { label: "Commodity", value: "{commodityType}" },
+            { label: "Weight", value: "{weight} lbs" },
+            { label: "Dimensions", value: "{dimensions}" }
+          ]
+        },
+        {
+          title: "SPECIAL REQUIREMENTS",
+          fields: [
+            { label: "Hazmat", value: "{isHazmat?UN: {unNumber}, Class: {hazmatClass}}" },
+            { label: "Temperature Control", value: "{isTemperatureControlled?{temperature}°F}" },
+            { label: "Palletized", value: "{isPalletized?{palletCount} pallets}" },
+            { label: "High Value", value: "{isHighValue?Yes}" },
+            { label: "Special Handling", value: "{specialHandling}" }
+          ]
+        }
+      ],
+      footer: "Best regards,\nYour Freight System\n\nThis is an automated message. Please do not reply directly."
+    };
+  }
+
+  // Default contact form template
+  return {
+    subject: "New Contact Form Message from {name}",
+    sections: [
+      {
+        title: "CONTACT INFORMATION",
+        fields: [
+          { label: "Name", value: "{name}" },
+          { label: "Email", value: "{email}" },
+          { label: "Phone", value: "{phone}" }
+        ]
+      },
+      {
+        title: "MESSAGE",
+        fields: [
+          { label: "Content", value: "{message}" }
+        ]
+      },
+      {
+        title: "PREFERENCES",
+        fields: [
+          { label: "SMS Updates", value: "{smsOptIn}" },
+          { label: "Terms Accepted", value: "{termsAccepted}" }
+        ]
+      }
+    ],
+    footer: "Best regards,\nYour Website System\n\nThis is an automated message. Please do not reply directly."
+  };
+}
+
+export async function submitForm(params: FormSubmission): Promise<void> {
+  const { formId, data } = params;
   try {
-    // 1. Get the form configuration
+    // 1. Get environment variables
+    const env = getServerEnv();
+
+    // 2. Get the form configuration
     const client = getClient();
     const form = await client.fetch(formQuery, { slug: formId }) as FormConfig;
 
@@ -46,7 +185,7 @@ export async function submitForm({ formId, data }: FormSubmission): Promise<void
       throw new FormSubmissionError('Form configuration not found', 404);
     }
 
-    // 2. Validate required fields
+    // 3. Validate required fields
     const missingFields = form.fields
       .filter((field: FormField) => {
         // Skip validation for conditional fields that aren't applicable
@@ -55,17 +194,7 @@ export async function submitForm({ formId, data }: FormSubmission): Promise<void
         if (field.name === "temperature" && !data.isTemperatureControlled) return false;
         if (field.name === "insuranceInfo" && !data.isHighValue) return false;
         
-        // Map form field names to data field names
-        const fieldMapping: { [key: string]: string } = {
-          'email': 'email',
-          'phone': 'phone',
-          'zipCode': 'zipCode',
-          'originPickupDate': 'originPickupDate'
-        };
-        
-        // Use mapped field name if it exists, otherwise use original field name
-        const dataFieldName = fieldMapping[field.name] || field.name;
-        return field.required && !data[dataFieldName];
+        return field.required && !data[field.name];
       })
       .map((field: FormField) => field.label);
 
@@ -73,7 +202,7 @@ export async function submitForm({ formId, data }: FormSubmission): Promise<void
       throw new FormSubmissionError(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
-    // 3. Validate conditional fields
+    // 4. Validate conditional fields
     const conditionalErrors = [];
     
     if (data.isPalletized && !data.palletCount) {
@@ -94,10 +223,10 @@ export async function submitForm({ formId, data }: FormSubmission): Promise<void
       throw new FormSubmissionError(conditionalErrors.join('\n'));
     }
 
-    // 4. Validate compliance fields
+    // 5. Validate compliance fields
     const missingCompliance = (form.complianceFields || [])
       .filter((field: ComplianceField) => {
-        const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type;
+        const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type === 'opt-in' ? 'smsOptIn' : field.type;
         return field.required && !data[fieldName];
       })
       .map((field: ComplianceField) => field.text);
@@ -106,74 +235,41 @@ export async function submitForm({ formId, data }: FormSubmission): Promise<void
       throw new FormSubmissionError(`Please accept the following: ${missingCompliance.join(', ')}`);
     }
 
-    // 5. Format email content
-    const emailContent = `
-New Quote Request
+    // 6. Get email template and format content
+    const defaultTemplate = getDefaultEmailTemplate(formId);
+    const template = form.notifications?.emailTemplate || defaultTemplate;
+    const { subject, text } = formatEmailContent(template, data);
 
-Company & Contact Information:
-----------------------------
-Company Name: ${data.companyName}
-Contact Name: ${data.contactName}
-Email: ${data.email}
-Phone: ${data.phone}
-
-Origin Information:
------------------
-City: ${data.originCity}
-State: ${data.originState}
-ZIP Code: ${data.zipCode}
-Pickup Date: ${data.originPickupDate}
-
-Destination Information:
-----------------------
-City: ${data.destinationCity}
-State: ${data.destinationState}
-Delivery Date: ${data.deliveryDate}
-
-Load Information:
----------------
-Truck & Trailer Type: ${data.truckTrailerType}
-Hazardous Material: ${data.hazardousMaterial || 'No'}
-Additional Services: ${data.additionalServices || 'None'}
-
-Additional Details:
------------------
-${data.details || 'None provided'}
-
-Compliance:
-----------
-Terms Accepted: ${data.termsAccepted ? 'Yes' : 'No'}
-    `;
-
-    // 6. Send email
+    // 7. Create email transporter
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: 587, // Use TLS port
-      secure: false, // Use TLS
+      host: env.smtp.host,
+      port: env.smtp.port,
+      secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: env.smtp.user,
+        pass: env.smtp.pass,
       },
       tls: {
-        ciphers: 'SSLv3',
         rejectUnauthorized: false
       }
     });
 
-    // Verify SMTP connection
+    // 8. Verify SMTP connection
     try {
       await transporter.verify();
     } catch (error) {
       console.error('SMTP Connection Error:', error);
-      throw new FormSubmissionError('Failed to connect to email server. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown SMTP error';
+      throw new FormSubmissionError(`Failed to connect to email server: ${errorMessage}. Please try again.`, 500);
     }
 
+    // 9. Send email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: 'quotes@bkelogistics.com',
-      replyTo: 'quotes@bkelogistics.com',
-      subject: `New Quote Request from ${data.companyName}`,
-      text: emailContent,
+      from: env.smtp.user,
+      to: form.notifications?.adminEmail || env.smtp.user,
+      replyTo: data.email,
+      subject,
+      text,
     });
 
   } catch (error) {
@@ -182,7 +278,8 @@ Terms Accepted: ${data.termsAccepted ? 'Yes' : 'No'}
       throw error;
     }
     throw new FormSubmissionError(
-      error instanceof Error ? error.message : 'An error occurred while submitting the form'
+      error instanceof Error ? error.message : 'An error occurred while submitting the form',
+      error instanceof FormSubmissionError ? error.statusCode : 500
     );
   }
 }

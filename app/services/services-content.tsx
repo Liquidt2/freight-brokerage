@@ -4,7 +4,15 @@ import { motion } from "framer-motion"
 import { Truck, Shield, Thermometer, FileCheck, Gauge, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ServiceContent, Certification } from './types'
+import { Service } from '@/hooks/use-services'
+import { useServices } from '@/hooks/use-services'
+import { useEffect } from 'react'
+
+interface Certification {
+  icon: string
+  title: string
+  items: string[]
+}
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   truck: Truck,
@@ -65,7 +73,39 @@ const certifications: Certification[] = [
   }
 ]
 
-export default function ServicesContent({ services }: { services: ServiceContent[] }) {
+export default function ServicesContent({ initialServices }: { initialServices: Service[] }) {
+  const { services, isLoading, error, fetchServices } = useServices()
+
+  useEffect(() => {
+    fetchServices()
+  }, [fetchServices])
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center py-12 bg-destructive/10 rounded-lg shadow border border-destructive/20">
+          <h2 className="text-2xl font-bold mb-2 text-destructive">Error Loading Services</h2>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-muted rounded-lg h-48 mb-4"></div>
+              <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-muted rounded w-1/2"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
   if (!services?.length) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -81,7 +121,7 @@ export default function ServicesContent({ services }: { services: ServiceContent
     <div className="space-y-20">
       {/* Main Services */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {services.map((service: ServiceContent, index: number) => {
+        {services.map((service, index) => {
           const Icon = iconMap[service.icon as keyof typeof iconMap]
           return (
             <motion.div
@@ -113,7 +153,7 @@ export default function ServicesContent({ services }: { services: ServiceContent
                       <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                       <p className="text-muted-foreground mb-4">{feature.description}</p>
                       <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {feature.details?.map((detail, detailIndex) => (
+                        {feature.details?.map((detail: string, detailIndex: number) => (
                           <li key={detailIndex} className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
                             <span className="text-sm">{detail}</span>
@@ -157,7 +197,7 @@ export default function ServicesContent({ services }: { services: ServiceContent
                   <div>
                     <h3 className="text-xl font-semibold mb-4">Requirements & Compliance</h3>
                     <div className="space-y-4">
-                      {service.requirements.map((req, index) => (
+                      {service.requirements.map((req: NonNullable<Service['requirements']>[number], index: number) => (
                         <motion.div
                           key={req.title}
                           initial={{ opacity: 0, y: 20 }}
@@ -169,7 +209,7 @@ export default function ServicesContent({ services }: { services: ServiceContent
                           <h4 className="font-medium mb-2">{req.title}</h4>
                           <p className="text-sm text-muted-foreground mb-3">{req.description}</p>
                           <ul className="space-y-1">
-                            {req.items.map((item, itemIndex) => (
+                            {req.items.map((item: string, itemIndex: number) => (
                               <li key={itemIndex} className="text-sm flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
                                 {item}
@@ -188,7 +228,7 @@ export default function ServicesContent({ services }: { services: ServiceContent
                     <h3 className="text-xl font-semibold mb-4">Service Coverage</h3>
                     <div className="p-4 bg-muted/50 rounded-lg">
                       <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
-                        {service.coverage.areas.map((area, index) => (
+                        {service.coverage.areas.map((area: string, index: number) => (
                           <li key={index} className="text-sm flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
                             {area}
@@ -238,7 +278,7 @@ export default function ServicesContent({ services }: { services: ServiceContent
                 <Icon className="w-12 h-12 mb-4" />
                 <h3 className="text-xl font-semibold mb-4">{cert.title}</h3>
                 <ul className="space-y-2">
-                  {cert.items.map((item, itemIndex) => (
+                  {cert.items.map((item: string, itemIndex: number) => (
                     <li key={itemIndex} className="text-sm opacity-90">{item}</li>
                   ))}
                 </ul>

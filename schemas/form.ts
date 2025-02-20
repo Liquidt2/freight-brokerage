@@ -148,6 +148,20 @@ const formSchema = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Draft', value: 'draft' },
+          { title: 'Published', value: 'published' },
+          { title: 'Archived', value: 'archived' }
+        ],
+      },
+      initialValue: 'draft',
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
       name: 'name',
       title: 'Form Name',
       type: 'string',
@@ -353,8 +367,63 @@ const formSchema = defineType({
         defineField({
           name: 'emailTemplate',
           title: 'Email Template',
-          type: 'text',
-          description: 'Template for notification emails. Use {field} syntax to include form values.',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'subject',
+              title: 'Email Subject',
+              type: 'string',
+              description: 'Use {fieldName} syntax for dynamic values (e.g., "New Quote Request from {companyName}")',
+              validation: Rule => Rule.required(),
+            }),
+            defineField({
+              name: 'sections',
+              title: 'Email Sections',
+              type: 'array',
+              of: [{
+                type: 'object',
+                fields: [
+                  defineField({
+                    name: 'title',
+                    title: 'Section Title',
+                    type: 'string',
+                    validation: Rule => Rule.required(),
+                  }),
+                  defineField({
+                    name: 'fields',
+                    title: 'Fields',
+                    type: 'array',
+                    of: [{
+                      type: 'object',
+                      fields: [
+                        defineField({
+                          name: 'label',
+                          title: 'Label',
+                          type: 'string',
+                          validation: Rule => Rule.required(),
+                        }),
+                        defineField({
+                          name: 'value',
+                          title: 'Value',
+                          type: 'string',
+                          description: 'Use {fieldName} to display form field values',
+                          validation: Rule => Rule.required(),
+                        }),
+                      ],
+                    }],
+                    validation: Rule => Rule.required(),
+                  }),
+                ],
+              }],
+              validation: Rule => Rule.required(),
+            }),
+            defineField({
+              name: 'footer',
+              title: 'Email Footer',
+              type: 'text',
+              description: 'Optional footer text for the email',
+            }),
+          ],
         }),
       ],
     }),

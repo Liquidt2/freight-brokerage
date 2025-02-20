@@ -7,11 +7,13 @@ if (!projectId || !dataset) {
   throw new Error('Required environment variables are not set');
 }
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 const clientConfig: ClientConfig = {
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
+  useCdn: !isDevelopment, // Disable CDN in development
   token,
   perspective: 'published' as ClientPerspective,
   resultSourceMap: false,
@@ -38,19 +40,27 @@ export const getClient = (preview: boolean = false) => {
           query,
           params,
           hasToken: !!token,
-          preview
+          preview,
+          isDevelopment
         });
 
         const result = await client.fetch(query, params);
         
         if (!result) {
-          console.error('No data returned from Sanity for query:', query);
+          console.error('No data returned from Sanity for query:', {
+            query,
+            params,
+            projectId,
+            dataset
+          });
           throw new Error('No data found');
         }
 
         console.log('Sanity response:', {
           hasData: !!result,
-          type: result ? typeof result : 'null'
+          type: result ? typeof result : 'null',
+          resultLength: Array.isArray(result) ? result.length : 'not an array',
+          sample: result ? JSON.stringify(result).slice(0, 100) + '...' : 'null'
         });
 
         return result;

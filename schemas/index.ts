@@ -1,6 +1,8 @@
 import { defineField, defineType } from 'sanity';
 import about from './about';
 import author from './author';
+import chatLead from './chatLead';
+import chatSettings from './chatSettings';
 import blockContent from './blockContent';
 import category from './category';
 import footer from './footer';
@@ -20,6 +22,8 @@ export const schemaTypes = [
   about,
   apiWebhooks,
   author,
+  chatLead,
+  chatSettings,
   blockContent,
   category,
   footer,

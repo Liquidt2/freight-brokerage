@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { useEffect } from "react"
 import { motion } from "framer-motion"
-import { Truck, Shield, Clock, Globe, Box, Beaker } from "lucide-react"
+import { Truck, Shield, Clock, Globe, Box, Beaker, MapPin } from "lucide-react"
 import Link from "next/link"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
@@ -162,7 +162,9 @@ export function IndustryFocusSection({ data }: { data: IndustryFocusData }) {
   }
 
   return (
-    <section className="py-12">
+    <section className="py-12 relative">
+      <div className="absolute inset-x-0 top-0 h-px bg-border/50 opacity-50" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-border/50 opacity-50" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -220,6 +222,8 @@ export function FeaturesSection({ data }: { data: FeaturesData }) {
 
   return (
     <section className="py-12 bg-muted/50 relative">
+      <div className="absolute inset-x-0 top-0 h-px bg-border/50 opacity-50" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-border/50 opacity-50" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -287,7 +291,9 @@ export function HowItWorksSection({ data }: { data: HowItWorksData }) {
 
 export function TestimonialsSection({ data }: { data: TestimonialsData }) {
   return (
-    <section className="py-12 bg-muted/50">
+    <section className="py-12 bg-muted/50 relative">
+      <div className="absolute inset-x-0 top-0 h-px bg-border/50 opacity-50" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-border/50 opacity-50" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -299,11 +305,12 @@ export function TestimonialsSection({ data }: { data: TestimonialsData }) {
           {data.testimonialsList.map((testimonial, index) => (
             <motion.div
               key={index}
-              className="p-6 bg-background rounded-lg shadow-sm"
+              className="glow-effect card-hover-effect p-6 bg-background rounded-lg shadow-sm card-border relative overflow-hidden hover:scale-105 hover:-translate-y-1 transition-all duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
+              whileHover={{ scale: 1.02 }}
             >
               <p className="text-lg mb-4 italic">&ldquo;{testimonial.quote}&rdquo;</p>
               <div>
@@ -320,7 +327,9 @@ export function TestimonialsSection({ data }: { data: TestimonialsData }) {
 
 export function MapSection({ data }: { data: MapSectionData }) {
   return (
-    <section className="py-12">
+    <section className="py-12 relative">
+      <div className="absolute inset-x-0 top-0 h-px bg-border/50 opacity-50" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-border/50 opacity-50" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -332,12 +341,14 @@ export function MapSection({ data }: { data: MapSectionData }) {
           {data.coverageAreas.map((area, index) => (
             <motion.div
               key={area}
-              className="p-4 bg-background rounded-lg text-center"
+              className="glow-effect card-hover-effect p-6 bg-background rounded-lg shadow-sm card-border relative overflow-hidden hover:scale-105 hover:-translate-y-1 transition-all duration-300 text-center flex items-center justify-center gap-2"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
               viewport={{ once: true }}
+              whileHover={{ scale: 1.02 }}
             >
+              <MapPin className="h-5 w-5 text-primary" />
               {area}
             </motion.div>
           ))}
@@ -349,7 +360,9 @@ export function MapSection({ data }: { data: MapSectionData }) {
 
 export function FAQSection({ data }: { data: FAQData }) {
   return (
-    <section className="py-12 bg-muted/50">
+    <section className="py-12 bg-muted/50 relative">
+      <div className="absolute inset-x-0 top-0 h-px bg-border/50 opacity-50" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-border/50 opacity-50" />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -372,7 +385,9 @@ export function FAQSection({ data }: { data: FAQData }) {
 
 export function NewsSection({ data }: { data: NewsData }) {
   return (
-    <section className="py-12">
+    <section className="py-12 relative">
+      <div className="absolute inset-x-0 top-0 h-px bg-border/50 opacity-50" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-border/50 opacity-50" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold">{data.title}</h2>
@@ -384,11 +399,12 @@ export function NewsSection({ data }: { data: NewsData }) {
           {data.newsItems.map((item, index) => (
             <motion.article
               key={index}
-              className="p-6 bg-background rounded-lg shadow-sm"
+              className="glow-effect card-hover-effect p-6 bg-background rounded-lg shadow-sm card-border relative overflow-hidden hover:scale-105 hover:-translate-y-1 transition-all duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
+              whileHover={{ scale: 1.02 }}
             >
               <time className="text-sm text-muted-foreground">{new Date(item.date).toLocaleDateString()}</time>
               <h3 className="text-xl font-semibold mt-2 mb-4">{item.title}</h3>

@@ -37,6 +37,20 @@ export interface FormContent {
     title: string;
     message: string;
   };
+  notifications?: {
+    adminEmail?: string;
+    emailTemplate?: {
+      subject: string;
+      sections: Array<{
+        title: string;
+        fields: Array<{
+          label: string;
+          value: string;
+        }>;
+      }>;
+      footer?: string;
+    };
+  };
 }
 
 // Define the base schema with all fields optional

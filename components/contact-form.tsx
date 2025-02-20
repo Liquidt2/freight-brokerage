@@ -1,10 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "sonner"
+import { getClient } from "@/lib/sanity/client"
+import { formQuery } from "@/lib/sanity/queries"
+import { submitForm, FormSubmission } from "@/app/actions/submit-form"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,9 +23,55 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 
+interface ComplianceField {
+  text: string
+  type: 'consent' | 'opt-in' | 'opt-out'
+  required: boolean
+}
+
+interface FormConfig {
+  title: string
+  description?: string
+  fields: Array<{
+    label: string
+    type: string
+    name: string
+    required: boolean
+    options?: Array<{ value: string }>
+  }>
+  complianceFields?: ComplianceField[]
+  submitButton?: {
+    text: string
+    loadingText: string
+  }
+  successMessage?: {
+    title: string
+    message: string
+  }
+  errorMessage?: {
+    title: string
+    message: string
+  }
+}
+
 const phoneRegex = /^(\+1|1)?[-. ]?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
 
-const formSchema = z.object({
+interface FormValues {
+  name: string
+  email: string
+  phone: string
+  message: string
+  smsOptIn?: boolean
+  termsAccepted?: boolean
+  'opt-out'?: boolean
+  [key: string]: string | boolean | undefined
+}
+
+type SchemaShape = {
+  [K in keyof FormValues]: z.ZodType<FormValues[K]>
+}
+
+const baseSchema: SchemaShape = {
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
@@ -43,32 +92,67 @@ const formSchema = z.object({
   message: z.string().min(10, {
     message: "Message must be at least 10 characters.",
   }),
-  smsOptIn: z.boolean().default(false),
-})
+  smsOptIn: z.boolean().optional(),
+  termsAccepted: z.boolean().optional(),
+  'opt-out': z.boolean().optional(),
+}
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formConfig, setFormConfig] = useState<FormConfig | null>(null)
+  const [schema, setSchema] = useState(() => z.object(baseSchema).passthrough())
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  useEffect(() => {
+    const fetchFormConfig = async () => {
+      try {
+        const client = getClient()
+        const config = await client.fetch(formQuery, { slug: 'contact-us' })
+        setFormConfig(config)
+
+        // Create a new schema with compliance fields
+        const schemaConfig = { ...baseSchema }
+        
+        config.complianceFields?.forEach((field: ComplianceField) => {
+          const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type === 'opt-in' ? 'smsOptIn' : field.type
+          schemaConfig[fieldName as keyof FormValues] = field.required 
+            ? z.boolean().refine(val => val, {
+                message: `Please accept ${field.text}`,
+              })
+            : z.boolean().default(false)
+        })
+        
+        setSchema(z.object(schemaConfig).passthrough())
+      } catch (error) {
+        console.error('Error fetching form config:', error)
+        toast.error('Error loading form configuration')
+      }
+    }
+
+    fetchFormConfig()
+  }, [])
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues: {
       name: "",
       email: "",
       phone: "",
       message: "",
       smsOptIn: false,
+      termsAccepted: false,
+      'opt-out': false,
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormValues) {
     try {
       setIsSubmitting(true)
-      // Here we would normally submit to an API endpoint
-      console.log(values)
-      toast.success("Message sent successfully!")
+      await submitForm({ formId: 'contact-us', data: values })
+      toast.success(formConfig?.successMessage?.message || "Message sent successfully!")
       form.reset()
     } catch (error) {
-      toast.error("Failed to send message. Please try again.")
+      const errorMessage = error instanceof Error ? error.message : "Failed to send message. Please try again."
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -76,7 +160,8 @@ export function ContactForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      {formConfig ? (
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -139,31 +224,38 @@ export function ContactForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="smsOptIn"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>SMS Updates</FormLabel>
-                <FormDescription>
-                  Receive shipping updates and notifications via SMS
-                </FormDescription>
-              </div>
-            </FormItem>
-          )}
-        />
+        {/* Compliance Fields */}
+        {formConfig.complianceFields?.map((field: ComplianceField, index: number) => {
+          const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type === 'opt-in' ? 'smsOptIn' : field.type
+          return (
+            <FormField
+              key={index}
+              control={form.control}
+              name={fieldName}
+              render={({ field: formField }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={formField.value as boolean}
+                      onCheckedChange={formField.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>{field.text}</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+          )
+        })}
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Sending..." : "Send Message"}
+          {isSubmitting ? "Sending..." : formConfig.submitButton?.text || "Send Message"}
         </Button>
       </form>
+      ) : (
+        <div>Loading form...</div>
+      )}
     </Form>
   )
 }

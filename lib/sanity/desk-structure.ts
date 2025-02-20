@@ -1,5 +1,5 @@
 import { StructureBuilder, StructureResolver } from 'sanity/desk'
-import { PlugIcon } from '@sanity/icons'
+import { PlugIcon, CommentIcon } from '@sanity/icons'
 import ApiWebhooksTab from '@/components/studio/ApiWebhooksTab'
 import BlogPreview from '@/components/studio/BlogPreview'
 
@@ -43,9 +43,34 @@ export const deskStructure: StructureResolver = (S: StructureBuilder) => {
             )
         ),
 
+      // Chatbot Section
+      S.listItem()
+        .title('Chatbot')
+        .icon(CommentIcon)
+        .child(
+          S.list()
+            .title('Chatbot')
+            .items([
+              S.listItem()
+                .title('Settings')
+                .child(
+                  S.document()
+                    .schemaType('chatSettings')
+                    .documentId('chatbot-settings')
+                ),
+              S.listItem()
+                .title('Leads')
+                .schemaType('chatLead')
+                .child(
+                  S.documentTypeList('chatLead')
+                    .title('Chat Leads')
+                ),
+            ])
+        ),
+
       // Other Content Types
       ...S.documentTypeListItems().filter(
-        (item) => !['post', 'apiWebhooks'].includes(item.getId() || '')
+        (item) => !['post', 'apiWebhooks', 'chatLead', 'chatSettings'].includes(item.getId() || '')
       )
     ])
 }

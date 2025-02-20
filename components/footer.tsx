@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Facebook, Instagram, Linkedin, Twitter, Truck, MapPin, Phone, Mail } from 'lucide-react'
 import { FooterContent } from './types'
+import { urlFor } from '@/lib/sanity/client'
 
 const socialIcons = {
   linkedin: Linkedin,
@@ -37,19 +38,20 @@ export function Footer({ footer, className }: FooterProps) {
           {/* Company Info */}
           <div className="space-y-3">
             <Link href="/" className="flex items-center space-x-2">
-              {footer.companyInfo.showLogo && footer.companyInfo.logo ? (
+            {footer.companyInfo?.showLogo && footer.companyInfo?.logo ? (
                 <Image
                   src={footer.companyInfo.logo}
-                  alt={footer.companyInfo.name}
-                  width={footer.companyInfo.logoWidth}
-                  height={footer.companyInfo.logoWidth * 0.5}
+                  alt={footer.companyInfo?.name || 'Company Logo'}
+                  width={footer.companyInfo?.logoWidth || 150}
+                  height={(footer.companyInfo?.logoWidth || 150) * 0.5}
                   className="object-contain"
+                  unoptimized
                 />
               ) : (
                 <Truck className="h-6 w-6" />
               )}
-              {footer.companyInfo.showName && (
-                <span className="font-bold text-lg">{footer.companyInfo.name}</span>
+              {footer.companyInfo?.showName && (
+                <span className="font-bold text-lg">{footer.companyInfo?.name}</span>
               )}
             </Link>
           </div>
@@ -83,22 +85,22 @@ export function Footer({ footer, className }: FooterProps) {
 
           {/* Contact Info */}
           <div className="text-sm text-muted-foreground space-y-2">
-            {footer.companyInfo.showAddress && (
+            {footer.companyInfo?.showAddress && (
               <p className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2" />
-                {footer.companyInfo.address}
+                {footer.companyInfo?.address}
               </p>
             )}
-            {footer.companyInfo.showPhone && (
+            {footer.companyInfo?.showPhone && (
               <p className="flex items-center">
                 <Phone className="h-4 w-4 mr-2" />
-                Phone: {footer.companyInfo.phone}
+                Phone: {footer.companyInfo?.phone}
               </p>
             )}
-            {footer.companyInfo.showEmail && (
+            {footer.companyInfo?.showEmail && (
               <p className="flex items-center">
                 <Mail className="h-4 w-4 mr-2" />
-                Email: {footer.companyInfo.email}
+                Email: {footer.companyInfo?.email}
               </p>
             )}
           </div>

@@ -1,8 +1,9 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Navbar } from '@/components/navbar'
+import Navbar from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { ChatWidgetWrapper } from '@/components/chat-widget-wrapper'
 import { FooterContent } from '@/components/types'
 import { NavigationContent } from '@/components/navigation-types'
 
@@ -26,11 +27,12 @@ export default function MainLayout({
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      <Navbar navigation={navigation} className="z-layer-nav" />
-      <div className="flex-1 flex flex-col relative z-layer-base pt-[56px]">
+      <Navbar navigation={navigation} />
+      <div className="flex-1 flex flex-col relative pt-[56px]">
         {children}
       </div>
       <Footer footer={footer} className="z-layer-content" />
+      <ChatWidgetWrapper />
     </div>
   )
 }

@@ -2,13 +2,13 @@
   "navigation": {
     "title": "Main Navigation",
     "logo": {
-      "text": "FreightFlow Pro",
+      "text": "BKE Logistics, LLC",
       "showText": true,
-      "showImage": false,
+      "showImage": true,
       "imageWidth": 150,
       "logoHeight": 75,
       "logoWidth": 150,
-      "showIcon": true
+      "showIcon": false
     },
     "menuItems": [
       {
@@ -71,12 +71,12 @@
     "socialLinks": [
       {
         "platform": "linkedin",
-        "url": "https://linkedin.com/company/freightflow-pro",
+        "url": "https://linkedin.com/company/bke-logistics",
         "show": true
       },
       {
         "platform": "twitter",
-        "url": "https://twitter.com/freightflow_pro",
+        "url": "https://twitter.com/bke_logistics",
         "show": true
       }
     ]

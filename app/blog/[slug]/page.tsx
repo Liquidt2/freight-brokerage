@@ -1,6 +1,6 @@
 import { draftMode } from 'next/headers'
 import { getClient } from '@/lib/sanity/client'
-import { singleBlogPostQuery } from '@/lib/sanity/queries'
+import { postBySlugQuery } from '@/lib/sanity/queries'
 import BlogPostClient from './blog-post-client'
 import Link from 'next/link'
 
@@ -31,11 +31,11 @@ async function getPost(slug: string, preview: boolean) {
     console.log('Fetching post with config:', {
       preview,
       slug,
-      query: singleBlogPostQuery
+      query: postBySlugQuery
     })
 
     const client = getClient(preview)
-    const post = await client.fetch(singleBlogPostQuery, { slug })
+    const post = await client.fetch(postBySlugQuery, { slug })
 
     if (!post) {
       throw new Error(`Post not found: ${slug}`);
