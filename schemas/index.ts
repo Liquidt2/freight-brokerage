@@ -6,7 +6,7 @@ import chatSettings from './chatSettings';
 import blockContent from './blockContent';
 import category from './category';
 import footer from './footer';
-import form, { formField, complianceField } from './form';
+import form, { formField, complianceField, emailField, emailSection } from './form';
 import homepage from './homepage';
 import media from './media';
 import navigation from './navigation';
@@ -30,6 +30,8 @@ export const schemaTypes = [
   form,
   formField,
   complianceField,
+  emailField,
+  emailSection,
   homepage,
   media,
   navigation,

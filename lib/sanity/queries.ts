@@ -72,6 +72,11 @@ export const formQuery = groq`*[_type == "form" && status == "published" && slug
     type,
     name,
     required,
+    hidden,
+    showWhen {
+      field,
+      equals
+    },
     options[] {
       _key,
       value

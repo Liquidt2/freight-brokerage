@@ -25,7 +25,8 @@ const quoteEmailTemplate = {
         { label: "Company", value: "{companyName}" },
         { label: "Contact", value: "{contactName}" },
         { label: "Email", value: "{email}" },
-        { label: "Phone", value: "{phone}" }
+        { label: "Phone", value: "{phone}" },
+        { label: "Address", value: "{companyAddress}, {companyCity}, {companyState} {companyZip}" }
       ]
     },
     {
@@ -49,10 +50,13 @@ const quoteEmailTemplate = {
     {
       title: "SPECIAL REQUIREMENTS",
       fields: [
-        { label: "Hazmat", value: "{isHazmat?UN: {unNumber}, Class: {hazmatClass}}" },
-        { label: "Temperature Control", value: "{isTemperatureControlled?{temperature}°F}" },
-        { label: "Palletized", value: "{isPalletized?{palletCount} pallets}" },
-        { label: "High Value", value: "{isHighValue?Yes}" },
+        { label: "Hazmat", value: "{isHazmat?Yes - UN: {unNumber}, Class: {hazmatClass}:No}" },
+        { label: "Temperature Control", value: "{isTemperatureControlled?Yes - {temperature}°F:No}" },
+        { label: "Palletized", value: "{isPalletized?Yes - {palletCount} pallets:No}" },
+        { label: "High Value", value: "{isHighValue?Yes - {insuranceInfo}:No}" },
+        { label: "Stackable", value: "{isStackable?Yes:No}" },
+        { label: "Heavy Haul", value: "{isHeavyHaul?Yes:No}" },
+        { label: "Over Dimensional", value: "{isOverDimensional?Yes - {overDimensionalDetails}:No}" },
         { label: "Special Handling", value: "{specialHandling}" }
       ]
     }
@@ -80,7 +84,7 @@ const contactEmailTemplate = {
     {
       title: "PREFERENCES",
       fields: [
-        { label: "SMS Updates", value: "{smsOptIn}" },
+        { label: "SMS Updates", value: "{smsOptIn?Yes:No}" },
         { label: "Terms Accepted", value: "{termsAccepted}" }
       ]
     }

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - SMTP_HOST=${SMTP_HOST}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - NEXT_PUBLIC_SANITY_PROJECT_ID=${NEXT_PUBLIC_SANITY_PROJECT_ID}
+      - NEXT_PUBLIC_SANITY_DATASET=${NEXT_PUBLIC_SANITY_DATASET}
+      - NEXT_PUBLIC_SANITY_API_VERSION=${NEXT_PUBLIC_SANITY_API_VERSION}
+      - NEXT_PUBLIC_SANITY_API_TOKEN=${NEXT_PUBLIC_SANITY_API_TOKEN}
+      - SANITY_STUDIO_TOKEN=${SANITY_STUDIO_TOKEN}
+    restart: unless-stopped

@@ -45,6 +45,18 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
+  // Helper function to get the correct field name for compliance fields
+  const getComplianceFieldName = (type: string) => {
+    switch (type) {
+      case 'consent':
+        return 'termsAccepted'
+      case 'sms':
+        return 'smsOptIn'
+      default:
+        return type
+    }
+  }
+
   // Dynamically build form schema
   const schemaFields = form.fields.reduce<Record<string, z.ZodTypeAny>>((acc, field) => {
     if (field.type === 'radio' && field.options?.some(opt => 
@@ -80,11 +92,18 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
 
   // Add compliance fields to schema if they exist
   form.complianceFields?.forEach((field) => {
-    const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type
+    const fieldName = getComplianceFieldName(field.type)
+    const touchedField = `${fieldName}Touched`
+    
+    // Add touched field to schema
+    schemaFields[touchedField] = z.boolean()
+    
     if (field.required) {
-      schemaFields[fieldName] = z.literal(true, {
-        errorMap: () => ({ message: field.text }),
-      })
+      // Use boolean().refine instead of literal(true) for more flexible validation
+      schemaFields[fieldName] = z.boolean()
+        .refine((val) => val === true, {
+          message: field.text
+        })
     } else {
       schemaFields[fieldName] = z.boolean().optional()
     }
@@ -100,8 +119,9 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
     ),
     ...(form.complianceFields?.reduce<Record<string, boolean>>(
       (acc, field) => {
-        const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type
-        return { ...acc, [fieldName]: false }
+        const fieldName = getComplianceFieldName(field.type)
+        // Initialize checkboxes as unchecked but track if they've been interacted with
+        return { ...acc, [fieldName]: false, [`${fieldName}Touched`]: false }
       },
       {}
     ) ?? {}),
@@ -247,13 +267,18 @@ export function DynamicForm({ form, onSubmit }: DynamicFormProps) {
           <FormField
             key={field.type}
             control={formInstance.control}
-            name={field.type === 'consent' ? 'termsAccepted' : field.type}
+            name={getComplianceFieldName(field.type)}
             render={({ field: formField }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                 <FormControl>
                   <Checkbox
                     checked={formField.value}
-                    onCheckedChange={formField.onChange}
+                    onCheckedChange={(checked) => {
+                      formField.onChange(checked)
+                      // Mark the field as touched when changed
+                      const touchedField = `${getComplianceFieldName(field.type)}Touched`
+                      formInstance.setValue(touchedField, true)
+                    }}
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">

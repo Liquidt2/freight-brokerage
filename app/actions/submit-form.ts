@@ -226,7 +226,7 @@ export async function submitForm(params: FormSubmission): Promise<void> {
     // 5. Validate compliance fields
     const missingCompliance = (form.complianceFields || [])
       .filter((field: ComplianceField) => {
-        const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type === 'opt-in' ? 'smsOptIn' : field.type;
+    const fieldName = field.type === 'consent' ? 'termsAccepted' : field.type === 'sms' || field.type === 'opt-in' ? 'smsOptIn' : field.type;
         return field.required && !data[fieldName];
       })
       .map((field: ComplianceField) => field.text);

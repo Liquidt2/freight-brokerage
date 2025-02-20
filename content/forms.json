@@ -54,10 +54,15 @@
           "required": true
         }
       ],
-      "complianceFields": [
+"complianceFields": [
         {
           "type": "consent",
           "text": "I agree to the processing of my personal data according to the privacy policy.",
+          "required": true
+        },
+        {
+          "type": "sms",
+          "text": "I agree to receive SMS updates",
           "required": true
         }
       ],
@@ -196,6 +201,106 @@
     ]
   },
   {
+    "label": "UN Number",
+    "name": "unNumber",
+    "type": "text",
+    "placeholder": "Enter UN Number",
+    "required": false,
+    "hidden": true,
+    "showWhen": {
+      "field": "hazardousMaterial",
+      "equals": "Yes"
+    }
+  },
+  {
+    "label": "Hazmat Class",
+    "name": "hazmatClass",
+    "type": "text",
+    "placeholder": "Enter Hazmat Class",
+    "required": false,
+    "hidden": true,
+    "showWhen": {
+      "field": "hazardousMaterial",
+      "equals": "Yes"
+    }
+  },
+  {
+    "label": "Temperature Control Required",
+    "name": "temperatureControl",
+    "type": "radio",
+    "required": false,
+    "options": [
+      { "value": "Yes" },
+      { "value": "No" }
+    ]
+  },
+  {
+    "label": "Required Temperature (°F)",
+    "name": "temperature",
+    "type": "number",
+    "placeholder": "Enter required temperature",
+    "required": false,
+    "hidden": true,
+    "showWhen": {
+      "field": "temperatureControl",
+      "equals": "Yes"
+    }
+  },
+  {
+    "label": "Palletized",
+    "name": "palletized",
+    "type": "radio",
+    "required": false,
+    "options": [
+      { "value": "Yes" },
+      { "value": "No" }
+    ]
+  },
+  {
+    "label": "Pallet Count",
+    "name": "palletCount",
+    "type": "number",
+    "placeholder": "Enter number of pallets",
+    "required": false,
+    "hidden": true,
+    "showWhen": {
+      "field": "palletized",
+      "equals": "Yes"
+    }
+  },
+  {
+    "label": "High Value Cargo",
+    "name": "highValue",
+    "type": "radio",
+    "required": false,
+    "options": [
+      { "value": "Yes" },
+      { "value": "No" }
+    ]
+  },
+  {
+    "label": "Cargo Value ($)",
+    "name": "cargoValue",
+    "type": "number",
+    "placeholder": "Enter cargo value",
+    "required": false,
+    "hidden": true,
+    "showWhen": {
+      "field": "highValue",
+      "equals": "Yes"
+    }
+  },
+  {
+    "label": "Over Dimensional",
+    "name": "overDimensional",
+    "type": "radio",
+    "required": false,
+    "options": [
+      { "value": "Yes" },
+      { "value": "No" }
+    ]
+  },
+  {
     "label": "Additional Services",
     "name": "additionalServices",
     "type": "select",
@@ -219,6 +324,11 @@
     "required": true
   },
   {
+    "type": "sms",
+    "text": "I agree to receive SMS updates",
+    "required": true
+  },
+  {
     "type": "opt-in",
     "text": "I would like to receive updates about freight rates and industry news.",
     "required": false
@@ -238,7 +348,68 @@
 },
 "notifications": {
   "adminEmail": "quotes@freightflowpro.com",
-  "emailTemplate": "New quote request from {companyName}:\n\nContact: {contactName}\nEmail: {email}\nPhone: {phone}\n\nTruck & Trailer Type: {truckTrailerType}\nRoute: {originCity}, {originState} to {destinationCity}, {destinationState}\nDelivery Date: {deliveryDate}\n\nAdditional Details:\n{details}"
+  "emailTemplate": {
+    "subject": "New Quote Request from {companyName}",
+    "sections": [
+      {
+        "title": "CONTACT DETAILS",
+        "fields": [
+          { "label": "Company", "value": "{companyName}" },
+          { "label": "Contact", "value": "{contactName}" },
+          { "label": "Email", "value": "{email}" },
+          { "label": "Phone", "value": "{phone}" }
+        ]
+      },
+      {
+        "title": "SHIPMENT DETAILS",
+        "fields": [
+          { "label": "Type", "value": "{truckTrailerType}" },
+          { "label": "From", "value": "{originCity}, {originState}" },
+          { "label": "To", "value": "{destinationCity}, {destinationState}" },
+          { "label": "Pickup", "value": "{originPickupDate}" },
+          { "label": "Delivery", "value": "{deliveryDate}" }
+        ]
+      },
+      {
+        "title": "LOAD DETAILS",
+        "fields": [
+          { "label": "Weight", "value": "{weight} lbs" },
+          { "label": "Dimensions", "value": "{dimensions}" }
+        ]
+      },
+      {
+        "title": "SPECIAL REQUIREMENTS",
+        "fields": [
+          { 
+            "label": "Hazmat", 
+            "value": "{hazardousMaterial}{#if hazardousMaterial==='Yes'} - UN {unNumber}, Class: {hazmatClass}{/if}" 
+          },
+          { 
+            "label": "Temperature Control", 
+            "value": "{temperatureControl}{#if temperatureControl==='Yes'} - {temperature}°F{/if}" 
+          },
+          { 
+            "label": "Palletized", 
+            "value": "{palletized}{#if palletized==='Yes'} - {palletCount} pallets{/if}" 
+          },
+          { 
+            "label": "High Value", 
+            "value": "{highValue}{#if highValue==='Yes'} - ${cargoValue}{/if}" 
+          },
+          { 
+            "label": "Over Dimensional", 
+            "value": "{overDimensional}" 
+          }
+        ]
+      },
+      {
+        "title": "ADDITIONAL DETAILS",
+        "fields": [
+          { "label": "Notes", "value": "{details}" }
+        ]
+      }
+    ]
+  }
 }
     }
   ]

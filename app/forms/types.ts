@@ -6,6 +6,11 @@ export interface FormFieldConfig {
   type: string;
   placeholder?: string;
   required?: boolean;
+  hidden?: boolean;
+  showWhen?: {
+    field: string;
+    equals: string;
+  };
   options?: Array<{ value: string } | string>;
   validation?: {
     pattern?: string;
@@ -95,6 +100,9 @@ const baseSchema = z.object({
   isStackable: z.boolean().default(false),
   isHighValue: z.boolean().default(false),
   insuranceInfo: z.string().optional(),
+  isHeavyHaul: z.boolean().default(false),
+  isOverDimensional: z.boolean().default(false),
+  overDimensionalDetails: z.string().optional(),
 
   // Compliance
   smsOptIn: z.boolean().default(false),
@@ -143,6 +151,9 @@ export const stepSchemas = {
     isHighValue: z.boolean().default(false),
     insuranceInfo: z.string().optional(),
     isStackable: z.boolean().default(false),
+    isHeavyHaul: z.boolean().default(false),
+    isOverDimensional: z.boolean().default(false),
+    overDimensionalDetails: z.string().optional(),
     specialHandling: z.string().optional(),
   }).superRefine((data, ctx) => {
     if (data.isPalletized && !data.palletCount) {
@@ -180,6 +191,13 @@ export const stepSchemas = {
         code: z.ZodIssueCode.custom,
         message: "Insurance information is required for high-value shipments",
         path: ["insuranceInfo"],
+      });
+    }
+    if (data.isOverDimensional && !data.overDimensionalDetails) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Dimensions are required for over-dimensional loads",
+        path: ["overDimensionalDetails"],
       });
     }
   }),
