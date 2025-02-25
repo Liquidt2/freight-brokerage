@@ -26,7 +26,7 @@ export const webhooksPlugin = definePlugin((config) => {
     setup: (context: PluginContext) => {
       // Handle document creation
       context.documentStore.on('create', async (document: SanityDocument) => {
-        if (document._type === 'post' && WEBHOOK_CREATE) {
+        if ((document._type === 'post' || document._type === 'form') && WEBHOOK_CREATE) {
           try {
             await fetch(WEBHOOK_CREATE, {
               method: 'POST',
@@ -54,7 +54,7 @@ export const webhooksPlugin = definePlugin((config) => {
         const { document, previous } = update
         const prevStatus = previous?.status || 'unknown'
         
-        if (document._type === 'post' && WEBHOOK_UPDATE) {
+        if ((document._type === 'post' || document._type === 'form') && WEBHOOK_UPDATE) {
           try {
             await fetch(WEBHOOK_UPDATE, {
               method: 'POST',
@@ -77,7 +77,7 @@ export const webhooksPlugin = definePlugin((config) => {
 
       // Handle document publishing
       context.documentStore.on('publish', async (document: SanityDocument) => {
-        if (document._type === 'post' && WEBHOOK_PUBLISH) {
+        if ((document._type === 'post' || document._type === 'form') && WEBHOOK_PUBLISH) {
           try {
             await fetch(WEBHOOK_PUBLISH, {
               method: 'POST',

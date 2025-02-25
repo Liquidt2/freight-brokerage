@@ -7,54 +7,64 @@
       "description": "Get in touch with our team. We're here to help with any questions about our freight brokerage services.",
       "fields": [
         {
-          "label": "Full Name",
-          "name": "fullName",
-          "type": "text",
-          "placeholder": "Enter your full name",
-          "required": true,
-          "validation": {
-            "pattern": "^[a-zA-Z ]{2,}$",
-            "message": "Please enter a valid name (minimum 2 characters)"
-          }
+          "group": "Contact Information",
+          "fields": [
+            {
+              "label": "Full Name",
+              "name": "fullName",
+              "type": "text",
+              "placeholder": "Enter your full name",
+              "required": true,
+              "validation": {
+                "pattern": "^[a-zA-Z ]{2,}$",
+                "message": "Please enter a valid name (minimum 2 characters)"
+              }
+            },
+            {
+              "label": "Email",
+              "name": "email",
+              "type": "email",
+              "placeholder": "Enter your email address",
+              "required": true,
+              "validation": {
+                "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                "message": "Please enter a valid email address"
+              }
+            },
+            {
+              "label": "Phone",
+              "name": "phone",
+              "type": "tel",
+              "placeholder": "Enter your phone number",
+              "required": false,
+              "validation": {
+                "pattern": "^\\+?[1-9]\\d{9,14}$",
+                "message": "Please enter a valid phone number"
+              }
+            }
+          ]
         },
         {
-          "label": "Email",
-          "name": "email",
-          "type": "email",
-          "placeholder": "Enter your email address",
-          "required": true,
-          "validation": {
-            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-            "message": "Please enter a valid email address"
-          }
-        },
-        {
-          "label": "Phone",
-          "name": "phone",
-          "type": "tel",
-          "placeholder": "Enter your phone number",
-          "required": false,
-          "validation": {
-            "pattern": "^\\+?[1-9]\\d{9,14}$",
-            "message": "Please enter a valid phone number"
-          }
-        },
-        {
-          "label": "Subject",
-          "name": "subject",
-          "type": "text",
-          "placeholder": "What is your inquiry about?",
-          "required": true
-        },
-        {
-          "label": "Message",
-          "name": "message",
-          "type": "textarea",
-          "placeholder": "How can we help you?",
-          "required": true
+          "group": "Message Details",
+          "fields": [
+            {
+              "label": "Subject",
+              "name": "subject",
+              "type": "text",
+              "placeholder": "What is your inquiry about?",
+              "required": true
+            },
+            {
+              "label": "Message",
+              "name": "message",
+              "type": "textarea",
+              "placeholder": "How can we help you?",
+              "required": true
+            }
+          ]
         }
       ],
-"complianceFields": [
+      "complianceFields": [
         {
           "type": "consent",
           "text": "I agree to the processing of my personal data according to the privacy policy.",
@@ -86,331 +96,446 @@
     {
       "name": "Request a Quote",
       "slug": "request-quote",
-"title": "Request a Quote",
-"description": "Fill out the form below to receive a customized freight quote.",
-"fields": [
-  {
-    "label": "Company Name",
-    "name": "companyName",
-    "type": "text",
-    "placeholder": "Enter your company name",
-    "required": true
-  },
-  {
-    "label": "Contact Name",
-    "name": "contactName",
-    "type": "text",
-    "placeholder": "Enter your full name",
-    "required": true
-  },
-  {
-    "label": "Email",
-    "name": "email",
-    "type": "email",
-    "placeholder": "Enter your email address",
-    "required": true,
-    "validation": {
-      "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-      "message": "Please enter a valid email address"
-    }
-  },
-  {
-    "label": "Phone",
-    "name": "phone",
-    "type": "tel",
-    "placeholder": "Enter your phone number",
-    "required": true,
-    "validation": {
-      "pattern": "^\\+?[1-9]\\d{9,14}$",
-      "message": "Please enter a valid phone number"
-    }
-  },
-  {
-    "label": "Truck & Trailer Type",
-    "name": "truckTrailerType",
-    "type": "select",
-    "required": true,
-    "options": [
-      "Full Truckload",
-      "Less Than Truckload (LTL)",
-      "Flatbed",
-      "Refrigerated",
-      "Expedited",
-      "Other"
-    ]
-  },
-  {
-    "label": "Origin City",
-    "name": "originCity",
-    "type": "text",
-    "placeholder": "Enter origin city",
-    "required": true
-  },
-  {
-    "label": "Origin State",
-    "name": "originState",
-    "type": "select",
-    "required": true,
-    "options": [
-      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
-    ]
-  },
-  {
-    "label": "Zip Code",
-    "name": "zipCode",
-    "type": "text",
-    "placeholder": "Enter zip code",
-    "required": true
-  },
-  {
-    "label": "Origin Pickup Date",
-    "name": "originPickupDate",
-    "type": "date",
-    "required": true
-  },
-  {
-    "label": "Destination City",
-    "name": "destinationCity",
-    "type": "text",
-    "placeholder": "Enter destination city",
-    "required": true
-  },
-  {
-    "label": "Destination State",
-    "name": "destinationState",
-    "type": "select",
-    "required": true,
-    "options": [
-      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
-    ]
-  },
-  {
-    "label": "Delivery Date",
-    "name": "deliveryDate",
-    "type": "date",
-    "required": true
-  },
-  {
-    "label": "Hazardous Material",
-    "name": "hazardousMaterial",
-    "type": "radio",
-    "required": false,
-    "options": [
-      { "value": "Yes" },
-      { "value": "No" }
-    ]
-  },
-  {
-    "label": "UN Number",
-    "name": "unNumber",
-    "type": "text",
-    "placeholder": "Enter UN Number",
-    "required": false,
-    "hidden": true,
-    "showWhen": {
-      "field": "hazardousMaterial",
-      "equals": "Yes"
-    }
-  },
-  {
-    "label": "Hazmat Class",
-    "name": "hazmatClass",
-    "type": "text",
-    "placeholder": "Enter Hazmat Class",
-    "required": false,
-    "hidden": true,
-    "showWhen": {
-      "field": "hazardousMaterial",
-      "equals": "Yes"
-    }
-  },
-  {
-    "label": "Temperature Control Required",
-    "name": "temperatureControl",
-    "type": "radio",
-    "required": false,
-    "options": [
-      { "value": "Yes" },
-      { "value": "No" }
-    ]
-  },
-  {
-    "label": "Required Temperature (°F)",
-    "name": "temperature",
-    "type": "number",
-    "placeholder": "Enter required temperature",
-    "required": false,
-    "hidden": true,
-    "showWhen": {
-      "field": "temperatureControl",
-      "equals": "Yes"
-    }
-  },
-  {
-    "label": "Palletized",
-    "name": "palletized",
-    "type": "radio",
-    "required": false,
-    "options": [
-      { "value": "Yes" },
-      { "value": "No" }
-    ]
-  },
-  {
-    "label": "Pallet Count",
-    "name": "palletCount",
-    "type": "number",
-    "placeholder": "Enter number of pallets",
-    "required": false,
-    "hidden": true,
-    "showWhen": {
-      "field": "palletized",
-      "equals": "Yes"
-    }
-  },
-  {
-    "label": "High Value Cargo",
-    "name": "highValue",
-    "type": "radio",
-    "required": false,
-    "options": [
-      { "value": "Yes" },
-      { "value": "No" }
-    ]
-  },
-  {
-    "label": "Cargo Value ($)",
-    "name": "cargoValue",
-    "type": "number",
-    "placeholder": "Enter cargo value",
-    "required": false,
-    "hidden": true,
-    "showWhen": {
-      "field": "highValue",
-      "equals": "Yes"
-    }
-  },
-  {
-    "label": "Over Dimensional",
-    "name": "overDimensional",
-    "type": "radio",
-    "required": false,
-    "options": [
-      { "value": "Yes" },
-      { "value": "No" }
-    ]
-  },
-  {
-    "label": "Additional Services",
-    "name": "additionalServices",
-    "type": "select",
-    "required": false,
-    "options": [
-      "Tarping", "Coil racks", "Temperature control", "Other"
-    ]
-  },
-  {
-    "label": "Additional Details",
-    "name": "details",
-    "type": "textarea",
-    "placeholder": "Please provide any additional details about your shipment",
-    "required": false
-  }
-],
-"complianceFields": [
-  {
-    "type": "consent",
-    "text": "I agree to the processing of my personal data according to the privacy policy.",
-    "required": true
-  },
-  {
-    "type": "sms",
-    "text": "I agree to receive SMS updates",
-    "required": true
-  },
-  {
-    "type": "opt-in",
-    "text": "I would like to receive updates about freight rates and industry news.",
-    "required": false
-  }
-],
-"submitButton": {
-  "text": "Request Quote",
-  "loadingText": "Submitting..."
-},
-"successMessage": {
-  "title": "Quote Request Received!",
-  "message": "Thank you for your quote request. Our team will analyze your requirements and get back to you with competitive rates within 1 business day."
-},
-"errorMessage": {
-  "title": "Error",
-  "message": "There was a problem submitting your quote request. Please try again or contact us directly."
-},
-"notifications": {
-  "adminEmail": "quotes@freightflowpro.com",
-  "emailTemplate": {
-    "subject": "New Quote Request from {companyName}",
-    "sections": [
-      {
-        "title": "CONTACT DETAILS",
-        "fields": [
-          { "label": "Company", "value": "{companyName}" },
-          { "label": "Contact", "value": "{contactName}" },
-          { "label": "Email", "value": "{email}" },
-          { "label": "Phone", "value": "{phone}" }
-        ]
+      "title": "Request a Quote",
+      "description": "Fill out the form below to receive a customized freight quote.",
+      "fields": [
+        {
+          "group": "Company & Contact Information",
+          "fields": [
+            {
+              "label": "Company Name",
+              "name": "companyName",
+              "type": "text",
+              "placeholder": "Enter your company name",
+              "required": true
+            },
+            {
+              "label": "Contact Name",
+              "name": "contactName",
+              "type": "text",
+              "placeholder": "Enter your full name",
+              "required": true
+            },
+            {
+              "label": "Email",
+              "name": "email",
+              "type": "email",
+              "placeholder": "Enter your email address",
+              "required": true,
+              "validation": {
+                "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                "message": "Please enter a valid email address"
+              }
+            },
+            {
+              "label": "Phone",
+              "name": "phone",
+              "type": "tel",
+              "placeholder": "Enter your phone number",
+              "required": true,
+              "validation": {
+                "pattern": "^\\+?[1-9]\\d{9,14}$",
+                "message": "Please enter a valid phone number"
+              }
+            },
+            {
+              "label": "Company Address",
+              "name": "companyAddress",
+              "type": "text",
+              "placeholder": "Enter company address",
+              "required": true
+            },
+            {
+              "label": "Company City",
+              "name": "companyCity",
+              "type": "text",
+              "placeholder": "Enter company city",
+              "required": true
+            },
+            {
+              "label": "Company State",
+              "name": "companyState",
+              "type": "select",
+              "required": true,
+              "options": [
+                "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+              ]
+            },
+            {
+              "label": "Company ZIP Code",
+              "name": "companyZip",
+              "type": "text",
+              "placeholder": "Enter company ZIP code",
+              "required": true,
+              "validation": {
+                "pattern": "^\\d{5}(-\\d{4})?$",
+                "message": "Please enter a valid ZIP code"
+              }
+            }
+          ]
+        },
+        {
+          "group": "Origin Information",
+          "fields": [
+            {
+              "label": "Origin City",
+              "name": "originCity",
+              "type": "text",
+              "placeholder": "Enter origin city",
+              "required": true
+            },
+            {
+              "label": "Origin State",
+              "name": "originState",
+              "type": "select",
+              "required": true,
+              "options": [
+                "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+              ]
+            },
+            {
+              "label": "Origin ZIP Code",
+              "name": "zipCode",
+              "type": "text",
+              "placeholder": "Enter origin ZIP code",
+              "required": true,
+              "validation": {
+                "pattern": "^\\d{5}(-\\d{4})?$",
+                "message": "Please enter a valid ZIP code"
+              }
+            },
+            {
+              "label": "Origin Pickup Date",
+              "name": "originPickupDate",
+              "type": "date",
+              "required": true
+            }
+          ]
+        },
+        {
+          "group": "Delivery Information",
+          "fields": [
+            {
+              "label": "Destination City",
+              "name": "destinationCity",
+              "type": "text",
+              "placeholder": "Enter destination city",
+              "required": true
+            },
+            {
+              "label": "Destination State",
+              "name": "destinationState",
+              "type": "select",
+              "required": true,
+              "options": [
+                "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+              ]
+            },
+            {
+              "label": "Destination ZIP Code",
+              "name": "destinationZip",
+              "type": "text",
+              "placeholder": "Enter destination ZIP code",
+              "required": true,
+              "validation": {
+                "pattern": "^\\d{5}(-\\d{4})?$",
+                "message": "Please enter a valid ZIP code"
+              }
+            },
+            {
+              "label": "Delivery Date",
+              "name": "deliveryDate",
+              "type": "date",
+              "required": true
+            }
+          ]
+        },
+        {
+          "group": "Load Information",
+          "fields": [
+            {
+              "label": "Trailer Type",
+              "name": "trailerType",
+              "type": "select",
+              "required": true,
+              "options": [
+                { "value": "Dry Van" },
+                { "value": "Flatbed" },
+                { "value": "Reefer" },
+                { "value": "Step Deck" },
+                { "value": "RGN" },
+                { "value": "Double Drop" },
+                { "value": "Conestoga" },
+                { "value": "Power Only" },
+                { "value": "Other" }
+              ]
+            },
+            {
+              "label": "Weight (in pounds)",
+              "name": "weight",
+              "type": "number",
+              "placeholder": "Enter weight in pounds",
+              "required": true
+            },
+            {
+              "label": "Commodity",
+              "name": "commodity",
+              "type": "text",
+              "placeholder": "Enter commodity type",
+              "required": true
+            },
+            {
+              "label": "Palletized Load",
+              "name": "isPalletized",
+              "type": "radio",
+              "required": true,
+              "options": [
+                { "value": "Yes" },
+                { "value": "No" }
+              ]
+            },
+            {
+              "label": "Number of Pallets",
+              "name": "palletCount",
+              "type": "number",
+              "placeholder": "Enter number of pallets",
+              "required": false,
+              "hidden": true,
+              "showWhen": {
+                "field": "isPalletized",
+                "equals": "Yes"
+              }
+            },
+            {
+              "label": "Hazmat Load",
+              "name": "isHazmat",
+              "type": "radio",
+              "required": true,
+              "options": [
+                { "value": "Yes" },
+                { "value": "No" }
+              ]
+            },
+            {
+              "label": "UN Number",
+              "name": "unNumber",
+              "type": "text",
+              "placeholder": "Enter UN Number",
+              "required": false,
+              "hidden": true,
+              "showWhen": {
+                "field": "isHazmat",
+                "equals": "Yes"
+              }
+            },
+            {
+              "label": "Hazmat Class",
+              "name": "hazmatClass",
+              "type": "text",
+              "placeholder": "Enter Hazmat Class",
+              "required": false,
+              "hidden": true,
+              "showWhen": {
+                "field": "isHazmat",
+                "equals": "Yes"
+              }
+            },
+            {
+              "label": "Temperature Controlled",
+              "name": "isTemperatureControlled",
+              "type": "radio",
+              "required": true,
+              "options": [
+                { "value": "Yes" },
+                { "value": "No" }
+              ]
+            },
+            {
+              "label": "Temperature (°F)",
+              "name": "temperature",
+              "type": "number",
+              "placeholder": "Enter required temperature",
+              "required": false,
+              "hidden": true,
+              "showWhen": {
+                "field": "isTemperatureControlled",
+                "equals": "Yes"
+              }
+            },
+            {
+              "label": "Stackable Load",
+              "name": "isStackable",
+              "type": "radio",
+              "required": true,
+              "options": [
+                { "value": "Yes" },
+                { "value": "No" }
+              ]
+            },
+            {
+              "label": "High Value Shipment",
+              "name": "isHighValue",
+              "type": "radio",
+              "required": true,
+              "options": [
+                { "value": "Yes" },
+                { "value": "No" }
+              ]
+            },
+            {
+              "label": "Insurance Information",
+              "name": "insuranceInfo",
+              "type": "textarea",
+              "placeholder": "Enter insurance requirements and coverage details",
+              "required": false,
+              "hidden": true,
+              "showWhen": {
+                "field": "isHighValue",
+                "equals": "Yes"
+              }
+            },
+            {
+              "label": "Heavy Load",
+              "name": "isHeavyLoad",
+              "type": "radio",
+              "required": true,
+              "options": [
+                { "value": "Yes" },
+                { "value": "No" }
+              ]
+            },
+            {
+              "label": "Heavy Load Weight",
+              "name": "heavyLoadWeight",
+              "type": "number",
+              "placeholder": "Enter weight in pounds",
+              "required": false,
+              "hidden": true,
+              "showWhen": {
+                "field": "isHeavyLoad",
+                "equals": "Yes"
+              }
+            },
+            {
+              "label": "Oversized Load",
+              "name": "isOversizedLoad",
+              "type": "radio",
+              "required": true,
+              "options": [
+                { "value": "Yes" },
+                { "value": "No" }
+              ]
+            },
+            {
+              "label": "Oversized Dimensions",
+              "name": "oversizedDimensions",
+              "type": "text",
+              "placeholder": "Enter dimensions (L x W x H)",
+              "required": false,
+              "hidden": true,
+              "showWhen": {
+                "field": "isOversizedLoad",
+                "equals": "Yes"
+              }
+            }
+          ]
+        }
+      ],
+      "complianceFields": [
+        {
+          "type": "consent",
+          "text": "I agree to the processing of my personal data according to the privacy policy.",
+          "required": true
+        },
+        {
+          "type": "sms",
+          "text": "I agree to receive SMS updates",
+          "required": true
+        },
+        {
+          "type": "opt-in",
+          "text": "I would like to receive updates about freight rates and industry news.",
+          "required": false
+        }
+      ],
+      "submitButton": {
+        "text": "Request Quote",
+        "loadingText": "Submitting..."
       },
-      {
-        "title": "SHIPMENT DETAILS",
-        "fields": [
-          { "label": "Type", "value": "{truckTrailerType}" },
-          { "label": "From", "value": "{originCity}, {originState}" },
-          { "label": "To", "value": "{destinationCity}, {destinationState}" },
-          { "label": "Pickup", "value": "{originPickupDate}" },
-          { "label": "Delivery", "value": "{deliveryDate}" }
-        ]
+      "successMessage": {
+        "title": "Quote Request Received!",
+        "message": "Thank you for your quote request. Our team will analyze your requirements and get back to you with competitive rates within 1 business day."
       },
-      {
-        "title": "LOAD DETAILS",
-        "fields": [
-          { "label": "Weight", "value": "{weight} lbs" },
-          { "label": "Dimensions", "value": "{dimensions}" }
-        ]
+      "errorMessage": {
+        "title": "Error",
+        "message": "There was a problem submitting your quote request. Please try again or contact us directly."
       },
-      {
-        "title": "SPECIAL REQUIREMENTS",
-        "fields": [
-          { 
-            "label": "Hazmat", 
-            "value": "{hazardousMaterial}{#if hazardousMaterial==='Yes'} - UN {unNumber}, Class: {hazmatClass}{/if}" 
-          },
-          { 
-            "label": "Temperature Control", 
-            "value": "{temperatureControl}{#if temperatureControl==='Yes'} - {temperature}°F{/if}" 
-          },
-          { 
-            "label": "Palletized", 
-            "value": "{palletized}{#if palletized==='Yes'} - {palletCount} pallets{/if}" 
-          },
-          { 
-            "label": "High Value", 
-            "value": "{highValue}{#if highValue==='Yes'} - ${cargoValue}{/if}" 
-          },
-          { 
-            "label": "Over Dimensional", 
-            "value": "{overDimensional}" 
-          }
-        ]
-      },
-      {
-        "title": "ADDITIONAL DETAILS",
-        "fields": [
-          { "label": "Notes", "value": "{details}" }
-        ]
+      "notifications": {
+        "adminEmail": "quotes@freightflowpro.com",
+        "emailTemplate": {
+          "subject": "New Quote Request from {companyName}",
+          "sections": [
+            {
+              "title": "CONTACT DETAILS",
+              "fields": [
+                { "label": "Company", "value": "{companyName}" },
+                { "label": "Contact", "value": "{contactName}" },
+                { "label": "Email", "value": "{email}" },
+                { "label": "Phone", "value": "{phone}" },
+                { "label": "Address", "value": "{companyAddress}" },
+                { "label": "Location", "value": "{companyCity}, {companyState} {companyZip}" }
+              ]
+            },
+            {
+              "title": "SHIPMENT DETAILS",
+              "fields": [
+                { "label": "From", "value": "{originCity}, {originState} {zipCode}" },
+                { "label": "To", "value": "{destinationCity}, {destinationState} {destinationZip}" },
+                { "label": "Pickup", "value": "{originPickupDate}" },
+                { "label": "Delivery", "value": "{deliveryDate}" }
+              ]
+            },
+            {
+              "title": "LOAD DETAILS",
+              "fields": [
+                { "label": "Trailer Type", "value": "{trailerType}" },
+                { "label": "Weight", "value": "{weight} lbs" },
+                { "label": "Commodity", "value": "{commodity}" },
+                { "label": "Palletized", "value": "{isPalletized}{#if isPalletized==='Yes'} - {palletCount} pallets{/if}" }
+              ]
+            },
+            {
+              "title": "SPECIAL REQUIREMENTS",
+              "fields": [
+                { 
+                  "label": "Hazmat", 
+                  "value": "{isHazmat}{#if isHazmat==='Yes'} - UN {unNumber}, Class: {hazmatClass}{/if}" 
+                },
+                { 
+                  "label": "Temperature Controlled", 
+                  "value": "{isTemperatureControlled}{#if isTemperatureControlled==='Yes'} - {temperature}°F{/if}" 
+                },
+                { 
+                  "label": "Stackable", 
+                  "value": "{isStackable}" 
+                },
+                { 
+                  "label": "High Value", 
+                  "value": "{isHighValue}{#if isHighValue==='Yes'} - Insurance: {insuranceInfo}{/if}" 
+                },
+                {
+                  "label": "Heavy Load",
+                  "value": "{isHeavyLoad}{#if isHeavyLoad==='Yes'} - Weight: {heavyLoadWeight} lbs{/if}"
+                },
+                {
+                  "label": "Oversized Load",
+                  "value": "{isOversizedLoad}{#if isOversizedLoad==='Yes'} - Dimensions: {oversizedDimensions}{/if}"
+                }
+              ]
+            }
+          ]
+        }
       }
-    ]
-  }
-}
     }
   ]
 }

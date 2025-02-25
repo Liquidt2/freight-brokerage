@@ -22,7 +22,7 @@ interface ExtendedBlogPost extends BlogPost {
   slug: {
     current: string
   }
-  mainImage: {
+  featuredImage: {
     _type: string
     asset: {
       _ref: string
@@ -92,9 +92,9 @@ export default function BlogList({ initialData }: BlogListProps) {
       >
           <Link href={`/blog/${featuredPost.slug.current}`} className="block">
           <div className="relative h-[400px]">
-            {featuredPost.mainImage ? (
+            {featuredPost.featuredImage ? (
                 <Image
-                  src={urlFor(featuredPost.mainImage).url()}
+                  src={urlFor(featuredPost.featuredImage).url()}
                   alt={featuredPost.title}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -177,9 +177,9 @@ export default function BlogList({ initialData }: BlogListProps) {
             >
               <Link href={`/blog/${post.slug.current}`} className="block h-full">
                 <div className="relative h-48 overflow-hidden">
-                  {post.mainImage ? (
+                  {post.featuredImage ? (
                     <Image
-                      src={urlFor(post.mainImage).url()}
+                      src={urlFor(post.featuredImage).url()}
                       alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

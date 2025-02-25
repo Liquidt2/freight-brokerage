@@ -14,7 +14,7 @@ if (!projectId || !dataset) {
 
 export const studioConfig = defineConfig({
   name: 'freight-brokerage',
-  title: 'FreightFlow Pro CMS',
+  title: 'BKE Logistics, LLC CMS',
   projectId,
   dataset,
   apiVersion,

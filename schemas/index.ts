@@ -15,12 +15,9 @@ import post from './post';
 import seo from './seo';
 import service from './service';
 import terms from './terms';
-import apiWebhooks from './apiWebhooks';
-
 // Export all schema types
 export const schemaTypes = [
   about,
-  apiWebhooks,
   author,
   chatLead,
   chatSettings,

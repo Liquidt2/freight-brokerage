@@ -21,7 +21,7 @@ type BlogPost = {
   publishedAt: string
   readTime: string
   category: string
-  mainImage: {
+  featuredImage: {
     _type: string
     asset: {
       _ref: string
@@ -102,9 +102,9 @@ export default function BlogPostClient({ post }: { post: BlogPost | undefined })
 
       <div className="relative h-[400px] rounded-lg overflow-hidden mb-8 mt-4">
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-        {post.mainImage?.asset ? (
+        {post.featuredImage?.asset ? (
           <Image
-            src={urlFor(post.mainImage).url()}
+            src={urlFor(post.featuredImage).url()}
             alt={post.title}
             fill
             sizes="100vw"

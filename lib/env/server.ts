@@ -28,5 +28,9 @@ export function getServerEnv() {
       user: process.env.EMAIL_USER!,
       pass: process.env.EMAIL_PASS!,
     },
+    webhook: {
+      url: process.env.WEBHOOK_URL,
+      secret: process.env.WEBHOOK_SECRET,
+    },
   } as const
 }

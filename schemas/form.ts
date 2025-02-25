@@ -68,24 +68,56 @@ const formField = defineType({
       type: 'string',
       options: {
         list: [
+          // Basic field types
+          { title: '-- Basic Fields --', value: '_basic_header' },
           { title: 'Text', value: 'text' },
           { title: 'Email', value: 'email' },
           { title: 'Phone', value: 'tel' },
           { title: 'Textarea', value: 'textarea' },
           { title: 'Select', value: 'select' },
-          { title: 'Checkbox', value: 'checkbox' },
           { title: 'Radio', value: 'radio' },
           { title: 'Date', value: 'date' },
           { title: 'Number', value: 'number' },
           { title: 'State', value: 'state' },
-          { title: 'Truck & Trailer Type', value: 'truckTrailerType' },
           { title: 'ZIP Code', value: 'zipCode' },
-          { title: 'Hazmat', value: 'hazmat' },
+          
+          // Load details
+          { title: '-- Load Details --', value: '_load_header' },
+          { title: 'Trailer Type', value: 'trailerType' },
+          { title: 'Weight', value: 'weight' },
+          { title: 'Commodity', value: 'commodity' },
+          
+          // Hazmat fields
+          { title: '-- Hazmat Information --', value: '_hazmat_header' },
+          { title: 'Hazmat Load', value: 'isHazmat' },
+          { title: 'UN Number', value: 'unNumber' },
+          { title: 'Hazmat Class', value: 'hazmatClass' },
+          
+          // Temperature control
+          { title: '-- Temperature Control --', value: '_temp_header' },
+          { title: 'Temperature Controlled', value: 'isTemperatureControlled' },
           { title: 'Temperature', value: 'temperature' },
-          { title: 'Palletized', value: 'palletized' },
-          { title: 'High Value', value: 'highValue' },
-          { title: 'Over Dimensional', value: 'overDimensional' },
-        ],
+          
+          // Pallet information
+          { title: '-- Pallet Information --', value: '_pallet_header' },
+          { title: 'Palletized', value: 'isPalletized' },
+          { title: 'Pallet Count', value: 'palletCount' },
+          
+          // Heavy haul
+          { title: '-- Heavy Load --', value: '_heavy_header' },
+          { title: 'Heavy Load', value: 'isHeavyLoad' },
+          { title: 'Heavy Load Weight', value: 'heavyLoadWeight' },
+          
+          // Oversized load
+          { title: '-- Oversized Load --', value: '_oversized_header' },
+          { title: 'Oversized Load', value: 'isOversizedLoad' },
+          { title: 'Dimensions', value: 'dimensions' },
+          
+          // High value
+          { title: '-- High Value --', value: '_value_header' },
+          { title: 'High Value Load', value: 'isHighValue' },
+          { title: 'Insurance Info', value: 'insuranceInfo' }
+        ]
       },
       validation: Rule => Rule.required(),
     }),
@@ -115,7 +147,7 @@ const formField = defineType({
           })
         ],
       }],
-      hidden: ({ parent }) => !['select', 'radio', 'state'].includes(parent?.type || ''),
+      hidden: ({ parent }) => !['select', 'radio', 'state'].includes(parent?.type || '') && !parent?.type?.startsWith('is'),
     }),
     defineField({
       name: 'validation',
@@ -156,19 +188,35 @@ const formField = defineType({
       name: 'showWhen',
       title: 'Show When',
       type: 'object',
-      hidden: ({ parent }) => !parent?.hidden,
+      description: 'Configure when this field should be shown',
       fields: [
         defineField({
           name: 'field',
-          title: 'Field',
+          title: 'Parent Field',
           type: 'string',
-          description: 'Field name to check',
+          description: 'Field that controls visibility',
+          options: {
+            list: [
+              { title: 'Hazmat Load', value: 'isHazmat' },
+              { title: 'Temperature Controlled', value: 'isTemperatureControlled' },
+              { title: 'Palletized', value: 'isPalletized' },
+              { title: 'Heavy Load', value: 'isHeavyLoad' },
+              { title: 'Oversized Load', value: 'isOversizedLoad' },
+              { title: 'High Value Load', value: 'isHighValue' }
+            ]
+          }
         }),
         defineField({
           name: 'equals',
-          title: 'Equals',
+          title: 'Parent Value',
           type: 'string',
-          description: 'Show when field equals this value',
+          description: 'Show when parent field equals this value',
+          options: {
+            list: [
+              { title: 'Yes', value: 'Yes' },
+              { title: 'No', value: 'No' }
+            ]
+          }
         }),
       ],
     }),
@@ -265,7 +313,31 @@ const formSchema = defineType({
       name: 'fields',
       title: 'Form Fields',
       type: 'array',
-      of: [{ type: 'formField' }],
+      of: [
+        // Support for the new grouped fields structure
+        {
+          type: 'object',
+          name: 'fieldGroup',
+          title: 'Field Group',
+          fields: [
+            defineField({
+              name: 'group',
+              title: 'Group Name',
+              type: 'string',
+              validation: Rule => Rule.required(),
+            }),
+            defineField({
+              name: 'fields',
+              title: 'Fields',
+              type: 'array',
+              of: [{ type: 'formField' }],
+              validation: Rule => Rule.required(),
+            }),
+          ],
+        },
+        // Maintain backward compatibility with direct form fields
+        { type: 'formField' }
+      ],
       validation: Rule => Rule.required(),
     }),
     defineField({

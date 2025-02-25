@@ -27,10 +27,11 @@ export const client = createClient(clientConfig)
 export const getClient = (preview: boolean = false) => {
   const client = createClient({
     ...clientConfig,
-    useCdn: !preview,
+    useCdn: false, // Always disable CDN to ensure fresh data
   })
 
   return {
+    useCdn: false, // Expose useCdn property
     fetch: async (query: string, params?: any) => {
       try {
         console.log('Sanity request:', {

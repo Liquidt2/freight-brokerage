@@ -4,6 +4,7 @@ import { getClient } from '@/lib/sanity/client';
 import { formQuery } from '@/lib/sanity/queries';
 import { getServerEnv } from '@/lib/env/server';
 import nodemailer from 'nodemailer';
+import { headers } from 'next/headers';
 
 export interface FormSubmission {
   formId: string;
@@ -16,6 +17,15 @@ interface FormField {
   label: string;
   required?: boolean;
   type: string;
+  showWhen?: {
+    field: string;
+    equals: string;
+  };
+}
+
+interface FormFieldGroup {
+  group: string;
+  fields: FormField[];
 }
 
 interface ComplianceField {
@@ -37,7 +47,7 @@ interface EmailTemplate {
 }
 
 interface FormConfig {
-  fields: FormField[];
+  fields: FormFieldGroup[];
   complianceFields?: ComplianceField[];
   notifications?: {
     adminEmail?: string;
@@ -54,18 +64,36 @@ class FormSubmissionError extends Error {
 }
 
 function formatEmailContent(template: EmailTemplate, data: Record<string, any>): { subject: string; text: string } {
+  // Log the data for debugging
+  console.log('Email template data:', JSON.stringify(data, null, 2));
+  
   const formatValue = (value: string): string => {
-    return value.replace(/\{(\w+)(?:\?([^}]+))?\}/g, (match, field, condition) => {
+    return value.replace(/\{(\w+)(?:=([^}]+))?(?:\?([^}]+))?\}/g, (match, field, equalCheck, condition) => {
+      console.log(`Formatting field: ${field}, value: ${data[field]}, equalCheck: ${equalCheck}, condition: ${condition}`);
+      
+      // Handle conditional formatting based on equality check (e.g., {isHazmat=Yes?...})
+      if (equalCheck && condition) {
+        const [truePart, falsePart = ''] = condition.split(':');
+        return data[field] === equalCheck ? truePart : falsePart;
+      }
+      
+      // Handle conditional formatting (e.g., {field?truePart:falsePart})
       if (condition) {
         const [truePart, falsePart = ''] = condition.split(':');
         return data[field] ? truePart : falsePart;
       }
+      
+      // Handle date fields
       if (field.endsWith('Date')) {
         return data[field] ? new Date(data[field]).toLocaleDateString() : 'N/A';
       }
+      
+      // Handle boolean fields
       if (typeof data[field] === 'boolean') {
         return data[field] ? 'Yes' : 'No';
       }
+      
+      // Return the field value or N/A if not found
       return data[field] || 'N/A';
     });
   };
@@ -94,86 +122,180 @@ function formatEmailContent(template: EmailTemplate, data: Record<string, any>):
   return { subject, text: content.trim() };
 }
 
+/**
+ * Sends form data to a webhook if configured
+ * @param formId The ID of the form being submitted
+ * @param data The form data
+ */
+async function sendToWebhook(formId: string, data: Record<string, any>): Promise<void> {
+  const env = getServerEnv();
+  const webhookUrl = env.webhook.url;
+  const webhookSecret = env.webhook.secret;
+  
+  // Skip if webhook URL is not configured
+  if (!webhookUrl) {
+    console.log('Webhook URL not configured, skipping webhook call');
+    return;
+  }
+  
+  try {
+    console.log(`Sending ${formId} form data to webhook: ${webhookUrl}`);
+    
+    // Prepare headers with authentication if secret is provided
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (webhookSecret) {
+      headers['Authorization'] = `Bearer ${webhookSecret}`;
+    }
+    
+    // Send data to webhook
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        formId,
+        data,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Webhook error (${response.status}): ${errorText}`);
+    } else {
+      console.log(`Webhook call successful: ${response.status}`);
+    }
+  } catch (error) {
+    // Log error but don't throw - we don't want webhook failures to break form submission
+    console.error('Error calling webhook:', error);
+  }
+}
+
 function getDefaultEmailTemplate(formId: string): EmailTemplate {
   if (formId === 'request-quote') {
     return {
-      subject: "New Quote Request from {companyName}",
+      subject: "New Freight Quote Request from {companyName}",
       sections: [
         {
-          title: "CONTACT DETAILS",
+          title: "CONTACT INFORMATION",
           fields: [
-            { label: "Company", value: "{companyName}" },
-            { label: "Contact", value: "{contactName}" },
-            { label: "Email", value: "{email}" },
-            { label: "Phone", value: "{phone}" }
+            { label: "Company Name", value: "{companyName}" },
+            { label: "Contact Name", value: "{contactName}" },
+            { label: "Email Address", value: "{email}" },
+            { label: "Phone Number", value: "{phone}" },
+            { label: "Company Address", value: "{companyAddress}" },
+            { label: "City", value: "{companyCity}" },
+            { label: "State", value: "{companyState}" },
+            { label: "ZIP Code", value: "{companyZip}" }
           ]
         },
         {
-          title: "SHIPMENT DETAILS",
+          title: "SHIPMENT INFORMATION",
           fields: [
-            { label: "From", value: "{originCity}, {originState} {zipCode}" },
-            { label: "To", value: "{destinationCity}, {destinationState} {destinationZip}" },
-            { label: "Pickup", value: "{originPickupDate}" },
-            { label: "Delivery", value: "{deliveryDate}" }
+            { label: "Origin", value: "{originCity}, {originState} {zipCode}" },
+            { label: "Destination", value: "{destinationCity}, {destinationState} {destinationZip}" },
+            { label: "Pickup Date", value: "{originPickupDate}" },
+            { label: "Delivery Date", value: "{deliveryDate}" }
           ]
         },
         {
-          title: "LOAD DETAILS",
+          title: "CARGO DETAILS",
           fields: [
-            { label: "Type", value: "{truckTrailerType}" },
-            { label: "Commodity", value: "{commodityType}" },
-            { label: "Weight", value: "{weight} lbs" },
-            { label: "Dimensions", value: "{dimensions}" }
+            { label: "Trailer Type", value: "{trailerType}" },
+            { label: "Commodity", value: "{commodity}" },
+            { label: "Weight (lbs)", value: "{weight}" },
+            { label: "Dimensions", value: "{isOversizedLoad=Yes?{oversizedDimensions}:N/A}" }
           ]
         },
         {
           title: "SPECIAL REQUIREMENTS",
           fields: [
-            { label: "Hazmat", value: "{isHazmat?UN: {unNumber}, Class: {hazmatClass}}" },
-            { label: "Temperature Control", value: "{isTemperatureControlled?{temperature}°F}" },
-            { label: "Palletized", value: "{isPalletized?{palletCount} pallets}" },
-            { label: "High Value", value: "{isHighValue?Yes}" },
-            { label: "Special Handling", value: "{specialHandling}" }
+            { label: "Hazardous Materials", value: "{isHazmat}" },
+            { label: "UN Number", value: "{isHazmat=Yes?{unNumber}:N/A}" },
+            { label: "Hazmat Class", value: "{isHazmat=Yes?{hazmatClass}:N/A}" },
+            { label: "Temperature Controlled", value: "{isTemperatureControlled}" },
+            { label: "Temperature (°F)", value: "{isTemperatureControlled=Yes?{temperature}:N/A}" },
+            { label: "Palletized", value: "{isPalletized}" },
+            { label: "Pallet Count", value: "{isPalletized=Yes?{palletCount}:N/A}" },
+            { label: "Stackable", value: "{isStackable}" },
+            { label: "High Value Cargo", value: "{isHighValue}" },
+            { label: "Insurance Information", value: "{isHighValue=Yes?{insuranceInfo}:N/A}" },
+            { label: "Heavy Load", value: "{isHeavyLoad}" },
+            { label: "Heavy Load Weight", value: "{isHeavyLoad=Yes?{heavyLoadWeight}:N/A}" },
+            { label: "Oversized Load", value: "{isOversizedLoad}" },
+            { label: "Oversized Dimensions", value: "{isOversizedLoad=Yes?{oversizedDimensions}:N/A}" }
+          ]
+        },
+        {
+          title: "ADDITIONAL INFORMATION",
+          fields: [
+            { label: "SMS Updates Requested", value: "{smsOptIn}" },
+            { label: "Terms & Conditions Accepted", value: "{termsAccepted}" },
+            { label: "Freight Rates Updates Requested", value: "{optIn}" }
           ]
         }
       ],
-      footer: "Best regards,\nYour Freight System\n\nThis is an automated message. Please do not reply directly."
+      footer: "Thank you for your quote request. Our team will review your information and contact you shortly.\n\nBest regards,\nFreight Brokerage Team\n\nThis is an automated message. Please do not reply directly to this email."
     };
   }
 
-  // Default contact form template
+  // Contact form template
+  if (formId === 'contact-us') {
+    return {
+      subject: "New Contact Form Submission from {fullName}",
+      sections: [
+        {
+          title: "CONTACT INFORMATION",
+          fields: [
+            { label: "Full Name", value: "{fullName}" },
+            { label: "Email Address", value: "{email}" },
+            { label: "Phone Number", value: "{phone}" }
+          ]
+        },
+        {
+          title: "MESSAGE DETAILS",
+          fields: [
+            { label: "Subject", value: "{subject}" },
+            { label: "Message", value: "{message}" }
+          ]
+        },
+        {
+          title: "COMMUNICATION PREFERENCES",
+          fields: [
+            { label: "SMS Updates Requested", value: "{smsOptIn}" },
+            { label: "Terms & Conditions Accepted", value: "{termsAccepted}" }
+          ]
+        }
+      ],
+      footer: "Thank you for contacting us. We will respond to your inquiry as soon as possible.\n\nBest regards,\nFreight Brokerage Team\n\nThis is an automated message. Please do not reply directly to this email."
+    };
+  }
+
+  // Default template for any other form
   return {
-    subject: "New Contact Form Message from {name}",
+    subject: "New Form Submission",
     sections: [
       {
-        title: "CONTACT INFORMATION",
+        title: "FORM DATA",
         fields: [
-          { label: "Name", value: "{name}" },
-          { label: "Email", value: "{email}" },
-          { label: "Phone", value: "{phone}" }
-        ]
-      },
-      {
-        title: "MESSAGE",
-        fields: [
-          { label: "Content", value: "{message}" }
-        ]
-      },
-      {
-        title: "PREFERENCES",
-        fields: [
-          { label: "SMS Updates", value: "{smsOptIn}" },
-          { label: "Terms Accepted", value: "{termsAccepted}" }
+          { label: "Form ID", value: formId }
         ]
       }
     ],
-    footer: "Best regards,\nYour Website System\n\nThis is an automated message. Please do not reply directly."
+    footer: "This is an automated message from your website's form submission system.\n\nBest regards,\nFreight Brokerage Team"
   };
 }
 
-export async function submitForm(params: FormSubmission): Promise<void> {
+export async function submitForm(params: FormSubmission): Promise<{ success: boolean; message: string }> {
   const { formId, data } = params;
+  
   try {
+    // Security headers check
+    const headersList = headers();
+    const clientIp = headersList.get('x-forwarded-for') || 'unknown';
+
     // 1. Get environment variables
     const env = getServerEnv();
 
@@ -186,17 +308,23 @@ export async function submitForm(params: FormSubmission): Promise<void> {
     }
 
     // 3. Validate required fields
-    const missingFields = form.fields
-      .filter((field: FormField) => {
+    const missingFields: string[] = [];
+    
+    // Iterate through each field group
+    form.fields.forEach((group: FormFieldGroup) => {
+      group.fields.forEach((field: FormField) => {
         // Skip validation for conditional fields that aren't applicable
-        if (field.name === "palletCount" && !data.isPalletized) return false;
-        if ((field.name === "unNumber" || field.name === "hazmatClass") && !data.isHazmat) return false;
-        if (field.name === "temperature" && !data.isTemperatureControlled) return false;
-        if (field.name === "insuranceInfo" && !data.isHighValue) return false;
+        if (field.showWhen) {
+          const parentField = field.showWhen.field;
+          const requiredValue = field.showWhen.equals;
+          if (data[parentField] !== requiredValue) return;
+        }
         
-        return field.required && !data[field.name];
-      })
-      .map((field: FormField) => field.label);
+        if (field.required && !data[field.name]) {
+          missingFields.push(field.label);
+        }
+      });
+    });
 
     if (missingFields.length > 0) {
       throw new FormSubmissionError(`Missing required fields: ${missingFields.join(', ')}`);
@@ -205,18 +333,24 @@ export async function submitForm(params: FormSubmission): Promise<void> {
     // 4. Validate conditional fields
     const conditionalErrors = [];
     
-    if (data.isPalletized && !data.palletCount) {
+    if (data.isPalletized === 'Yes' && !data.palletCount) {
       conditionalErrors.push('Pallet count is required for palletized loads');
     }
-    if (data.isHazmat && (!data.unNumber || !data.hazmatClass)) {
+    if (data.isHazmat === 'Yes' && (!data.unNumber || !data.hazmatClass)) {
       if (!data.unNumber) conditionalErrors.push('UN number is required for hazmat loads');
       if (!data.hazmatClass) conditionalErrors.push('Hazmat classification is required for hazmat loads');
     }
-    if (data.isTemperatureControlled && !data.temperature) {
+    if (data.isTemperatureControlled === 'Yes' && !data.temperature) {
       conditionalErrors.push('Temperature is required for temperature controlled loads');
     }
-    if (data.isHighValue && !data.insuranceInfo) {
+    if (data.isHighValue === 'Yes' && !data.insuranceInfo) {
       conditionalErrors.push('Insurance information is required for high-value shipments');
+    }
+    if (data.isHeavyLoad === 'Yes' && !data.heavyLoadWeight) {
+      conditionalErrors.push('Weight is required for heavy loads');
+    }
+    if (data.isOversizedLoad === 'Yes' && !data.oversizedDimensions) {
+      conditionalErrors.push('Dimensions are required for oversized loads');
     }
 
     if (conditionalErrors.length > 0) {
@@ -263,7 +397,10 @@ export async function submitForm(params: FormSubmission): Promise<void> {
       throw new FormSubmissionError(`Failed to connect to email server: ${errorMessage}. Please try again.`, 500);
     }
 
-    // 9. Send email
+    // Send data to webhook if configured
+    await sendToWebhook(formId, data);
+
+    // Send email notification
     await transporter.sendMail({
       from: env.smtp.user,
       to: form.notifications?.adminEmail || env.smtp.user,
@@ -272,14 +409,36 @@ export async function submitForm(params: FormSubmission): Promise<void> {
       text,
     });
 
+    return {
+      success: true,
+      message: 'Form submitted successfully',
+    };
+
   } catch (error) {
     console.error('Error submitting form:', error);
+    
+    // Log detailed error information
+    const errorDetails = {
+      timestamp: new Date().toISOString(),
+      formId,
+      error: error instanceof Error ? {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      } : error,
+    };
+    console.error('Detailed error:', JSON.stringify(errorDetails, null, 2));
+
     if (error instanceof FormSubmissionError) {
-      throw error;
+      return {
+        success: false,
+        message: error.message,
+      };
     }
-    throw new FormSubmissionError(
-      error instanceof Error ? error.message : 'An error occurred while submitting the form',
-      error instanceof FormSubmissionError ? error.statusCode : 500
-    );
+
+    return {
+      success: false,
+      message: 'An error occurred while submitting the form. Please try again.',
+    };
   }
 }

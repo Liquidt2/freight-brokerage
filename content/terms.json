@@ -2,7 +2,7 @@
   "terms": {
     "title": "Terms of Service",
     "lastUpdated": "2025-02-14",
-    "introduction": "Welcome to FreightFlow Pro. By using our services, you agree to these terms. Please read them carefully.",
+    "introduction": "Welcome to BKE Logistics, LLC. By using our services, you agree to these terms. Please read them carefully.",
     "content": [
       {
         "sectionTitle": "Service Agreement",
@@ -13,7 +13,7 @@
             "children": [
               {
                 "_type": "span",
-                "text": "These terms govern your use of FreightFlow Pro's freight brokerage and logistics services."
+                "text": "These terms govern your use of BKE Logistics, LLC's freight brokerage and logistics services."
               }
             ]
           }
@@ -28,7 +28,7 @@
                 "children": [
                   {
                     "_type": "span",
-                    "text": "FreightFlow Pro provides freight brokerage services, connecting shippers with qualified carriers for the transportation of goods."
+                    "text": "BKE Logistics, LLC provides freight brokerage services, connecting shippers with qualified carriers for the transportation of goods."
                   }
                 ]
               }
@@ -60,7 +60,7 @@
     "liabilityLimitations": [
       {
         "title": "Service Liability",
-        "description": "FreightFlow Pro's liability is limited to the scope of services provided as a broker."
+        "description": "BKE Logistics, LLC's liability is limited to the scope of services provided as a broker."
       },
       {
         "title": "Force Majeure",
@@ -86,14 +86,14 @@
       }
     ],
     "contactInformation": {
-      "email": "legal@freightflowpro.com",
+      "email": "legal@bkelogistics.com",
       "phone": "1-800-555-0123",
       "address": "123 Logistics Way, Dallas, TX 75201"
     },
     "effectiveDate": "2025-02-14",
     "seo": {
-      "title": "Terms of Service | FreightFlow Pro",
-      "description": "Read our terms of service to understand your rights and responsibilities when using FreightFlow Pro's freight brokerage services.",
+      "title": "Terms of Service | BKE Logistics, LLC",
+      "description": "Read our terms of service to understand your rights and responsibilities when using BKE Logistics, LLC's freight brokerage services.",
       "keywords": ["terms of service", "freight brokerage terms", "shipping terms", "logistics terms"]
     }
   }

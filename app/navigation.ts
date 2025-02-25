@@ -29,7 +29,7 @@ export async function getNavigationData(preview: boolean = false) {
           logo: {
             showIcon: true,
             showText: true,
-            text: 'FreightFlow Pro'
+            text: 'BKE Logistics, LLC'
           }
         }
       }

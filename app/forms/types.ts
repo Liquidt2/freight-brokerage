@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export interface FormFieldConfig {
+export interface FormField {
   label: string;
   name: string;
   type: string;
@@ -18,6 +18,11 @@ export interface FormFieldConfig {
   };
 }
 
+export interface FormFieldGroup {
+  group: string;
+  fields: FormField[];
+}
+
 export interface ComplianceField {
   type: string;
   text: string;
@@ -28,7 +33,7 @@ export interface FormContent {
   name: string;
   title: string;
   description?: string;
-  fields: FormFieldConfig[];
+  fields: FormFieldGroup[];
   complianceFields?: ComplianceField[];
   submitButton: {
     text: string;
@@ -58,158 +63,152 @@ export interface FormContent {
   };
 }
 
-// Define the base schema with all fields optional
-const baseSchema = z.object({
-  // Company & Contact Information
-  companyName: z.string().optional(),
-  contactName: z.string().optional(),
-  email: z.string().email({ message: "Please enter a valid email address." }).optional(),
-  phone: z.string().optional(),
-  companyAddress: z.string().optional(),
-  companyCity: z.string().optional(),
-  companyState: z.string().optional(),
-  companyZip: z.string().optional(),
+// Helper function to create field validator
+const createFieldValidator = (field: FormField): z.ZodTypeAny => {
+  let validator: z.ZodTypeAny = z.string();
 
-  // Origin Information
-  originCity: z.string().optional(),
-  originState: z.string().optional(),
-  zipCode: z.string().optional(),
-  originPickupDate: z.date().optional(),
+  switch (field.type) {
+    case 'email':
+      validator = z.string().email({ message: field.validation?.message || "Invalid email address" });
+      break;
+    case 'date':
+      validator = z.string();
+      break;
+    case 'number':
+      validator = z.string();
+      break;
+    case 'radio':
+    case 'isHazmat':
+    case 'isTemperatureControlled':
+    case 'isPalletized':
+    case 'isHeavyLoad':
+    case 'isOversizedLoad':
+    case 'isHighValue':
+      validator = z.enum(['Yes', 'No']);
+      break;
+    default:
+      validator = z.string();
+  }
 
-  // Destination Information
-  destinationCity: z.string().optional(),
-  destinationState: z.string().optional(),
-  destinationZip: z.string().optional(),
-  deliveryDate: z.date().optional(),
+  if (field.validation?.pattern) {
+    validator = (validator as z.ZodString).regex(new RegExp(field.validation.pattern), {
+      message: field.validation.message,
+    });
+  }
 
-  // Load Information
-  truckTrailerType: z.string().optional(),
-  commodityType: z.string().optional(),
-  weight: z.string().optional(),
-  dimensions: z.string().optional(),
-  loadType: z.string().optional(),
-  isPalletized: z.boolean().default(false),
-  palletCount: z.string().optional(),
-  isHazmat: z.boolean().default(false),
-  unNumber: z.string().optional(),
-  hazmatClass: z.string().optional(),
-  isTemperatureControlled: z.boolean().default(false),
-  temperature: z.string().optional(),
-  loadingMethod: z.string().optional(),
-  specialHandling: z.string().optional(),
-  isStackable: z.boolean().default(false),
-  isHighValue: z.boolean().default(false),
-  insuranceInfo: z.string().optional(),
-  isHeavyHaul: z.boolean().default(false),
-  isOverDimensional: z.boolean().default(false),
-  overDimensionalDetails: z.string().optional(),
+  if (field.required) {
+    if (validator instanceof z.ZodString) {
+      validator = validator.min(1, { message: `${field.label} is required` });
+    } else if (validator instanceof z.ZodEnum) {
+      validator = validator;
+    }
+  } else {
+    validator = validator.optional();
+  }
 
-  // Compliance
-  smsOptIn: z.boolean().default(false),
-  termsAccepted: z.boolean().default(false),
-})
+  return validator;
+};
 
-// Step-specific validation schemas
-export const stepSchemas = {
-  0: z.object({
-    companyName: z.string().min(1, { message: "Company name is required." }),
-    contactName: z.string().min(1, { message: "Contact name is required." }),
-    email: z.string().min(1, { message: "Email is required." }).email({ message: "Please enter a valid email address." }),
-    phone: z.string().min(1, { message: "Phone number is required." }),
-    companyAddress: z.string().min(1, { message: "Company address is required." }),
-    companyCity: z.string().min(1, { message: "City is required." }),
-    companyState: z.string().min(1, { message: "Please select a state." }),
-    companyZip: z.string().min(5, { message: "Please enter a valid ZIP code." }),
-  }),
-  1: z.object({
-    originCity: z.string().min(1, { message: "Origin city is required." }),
-    originState: z.string().min(1, { message: "Please select a state." }),
-    zipCode: z.string().min(5, { message: "Please enter a valid ZIP code." }),
-    originPickupDate: z.date({ required_error: "Please select a pickup date." }),
-  }),
-  2: z.object({
-    destinationCity: z.string().min(1, { message: "Destination city is required." }),
-    destinationState: z.string().min(1, { message: "Please select a state." }),
-    destinationZip: z.string().min(5, { message: "Please enter a valid ZIP code." }),
-    deliveryDate: z.date({ required_error: "Please select a delivery date." }),
-  }),
-  3: z.object({
-    truckTrailerType: z.string().min(1, { message: "Please select a truck & trailer type." }),
-    commodityType: z.string().min(1, { message: "Please enter the type of goods being shipped." }),
-    weight: z.string().min(1, { message: "Please enter the weight." }),
-    dimensions: z.string().min(1, { message: "Please enter the dimensions." }),
-    loadType: z.string().min(1, { message: "Please select a load type." }),
-    loadingMethod: z.string().min(1, { message: "Please select a loading method." }),
-    // Add conditional fields to the schema
-    isPalletized: z.boolean().default(false),
-    palletCount: z.string().optional(),
-    isHazmat: z.boolean().default(false),
-    unNumber: z.string().optional(),
-    hazmatClass: z.string().optional(),
-    isTemperatureControlled: z.boolean().default(false),
-    temperature: z.string().optional(),
-    isHighValue: z.boolean().default(false),
-    insuranceInfo: z.string().optional(),
-    isStackable: z.boolean().default(false),
-    isHeavyHaul: z.boolean().default(false),
-    isOverDimensional: z.boolean().default(false),
-    overDimensionalDetails: z.string().optional(),
-    specialHandling: z.string().optional(),
-  }).superRefine((data, ctx) => {
-    if (data.isPalletized && !data.palletCount) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Pallet count is required when load is palletized",
-        path: ["palletCount"],
+// Create a dynamic schema based on form fields
+export const createFormSchema = (form: FormContent) => {
+  const schemaFields: Record<string, z.ZodTypeAny> = {};
+
+  // Handle both grouped and ungrouped fields for backward compatibility
+  form.fields.forEach((item: any) => {
+    // If the item is a group
+    if (item.group && Array.isArray(item.fields)) {
+      item.fields.forEach((field: FormField) => {
+        // Ensure field has a valid name before creating a validator
+        if (field && field.name) {
+          schemaFields[field.name] = createFieldValidator(field);
+        }
       });
     }
-    if (data.isHazmat && (!data.unNumber || !data.hazmatClass)) {
-      if (!data.unNumber) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "UN number is required for hazmat loads",
-          path: ["unNumber"],
-        });
-      }
-      if (!data.hazmatClass) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Hazmat classification is required",
-          path: ["hazmatClass"],
-        });
+    // If the item is a direct field (old format)
+    else {
+      const field = item as FormField;
+      // Ensure field has a valid name before creating a validator
+      if (field && field.name) {
+        schemaFields[field.name] = createFieldValidator(field);
       }
     }
-    if (data.isTemperatureControlled && !data.temperature) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Temperature is required for temperature controlled loads",
-        path: ["temperature"],
-      });
-    }
-    if (data.isHighValue && !data.insuranceInfo) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Insurance information is required for high-value shipments",
-        path: ["insuranceInfo"],
-      });
-    }
-    if (data.isOverDimensional && !data.overDimensionalDetails) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Dimensions are required for over-dimensional loads",
-        path: ["overDimensionalDetails"],
-      });
-    }
-  }),
-  4: z.object({
-    termsAccepted: z.literal(true, {
-      errorMap: () => ({ message: "You must accept the terms and conditions" }),
-    }),
-  }),
-}
+  });
 
-export const formSchema = baseSchema
+  // Add compliance fields
+  form.complianceFields?.forEach((field) => {
+    if (!field || !field.type) return;
+    
+    const fieldName = field.type === 'consent' ? 'termsAccepted' : 
+                     field.type === 'sms' ? 'smsOptIn' : field.type;
+    
+    // Ensure fieldName is valid
+    if (fieldName) {
+      schemaFields[fieldName] = field.required ? 
+        z.literal(true, { errorMap: () => ({ message: field.text }) }) :
+        z.boolean().optional();
+      // Add touched state tracking
+      schemaFields[`${fieldName}Touched`] = z.boolean();
+    }
+  });
 
-export type FormSchema = z.infer<typeof formSchema>
-export type FormFieldName = keyof FormSchema
-export type FormFieldValues = FormSchema
+  return z.object(schemaFields);
+};
+
+// Create step schemas based on form fields
+export const createStepSchemas = (form: FormContent) => {
+  const stepSchemas: Record<number, z.ZodTypeAny> = {};
+
+  // Create a schema for each group
+  form.fields.forEach((item: any, index) => {
+    const schemaFields: Record<string, z.ZodTypeAny> = {};
+    
+    // If the item is a group
+    if (item.group && Array.isArray(item.fields)) {
+      item.fields.forEach((field: FormField) => {
+        // Ensure field has a valid name before creating a validator
+        if (field && field.name) {
+          schemaFields[field.name] = createFieldValidator(field);
+        }
+      });
+    }
+    // If the item is a direct field (old format)
+    else {
+      const field = item as FormField;
+      // Ensure field has a valid name before creating a validator
+      if (field && field.name) {
+        schemaFields[field.name] = createFieldValidator(field);
+      }
+    }
+
+    stepSchemas[index] = z.object(schemaFields);
+  });
+
+  // Add compliance fields as the last step
+  if (form.complianceFields?.length) {
+    const complianceFields: Record<string, z.ZodTypeAny> = {};
+    form.complianceFields.forEach((field) => {
+      if (!field || !field.type) return;
+      
+      const fieldName = field.type === 'consent' ? 'termsAccepted' : 
+                       field.type === 'sms' ? 'smsOptIn' : field.type;
+      
+      // Ensure fieldName is valid
+      if (fieldName) {
+        complianceFields[fieldName] = field.required ?
+          z.literal(true, { errorMap: () => ({ message: field.text }) }) :
+          z.boolean().optional();
+      }
+    });
+    stepSchemas[form.fields.length] = z.object(complianceFields);
+  }
+
+  return stepSchemas;
+};
+
+// Export the step schemas type
+export type StepSchemas = ReturnType<typeof createStepSchemas>;
+
+// Export types for form values
+export type FormSchema = z.ZodObject<Record<string, z.ZodTypeAny>>;
+export type FormFieldName = string;
+export type FormFieldValues = Record<string, any>;

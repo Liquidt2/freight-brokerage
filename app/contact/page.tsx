@@ -1,9 +1,36 @@
 import { draftMode } from 'next/headers'
+
+export const revalidate = 60 // Revalidate every minute
 import { getClient } from '@/lib/sanity/client'
 import { formQuery } from '@/lib/sanity/queries'
-import { FormContent } from '@/app/forms/types'
+import { FormContent, FormField, FormFieldGroup } from '@/app/forms/types'
 import { submitForm } from '@/app/actions/submit-form'
 import ContactFormClient from './contact-form-client'
+
+// Helper function to transform a field
+function transformField(field: FormField) {
+  return {
+    ...field,
+    // Ensure radio buttons and conditional fields have proper options
+    options: field.type && field.type.startsWith("is")
+      ? [{ value: "Yes" }, { value: "No" }]
+      : field.options,
+    // Set hidden state based on showWhen
+    hidden: field.showWhen ? true : field.hidden,
+    // Add validation for specific field types
+    validation: {
+      ...field.validation,
+      pattern:
+        field.type === "tel"
+          ? "^\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"
+          : field.validation?.pattern,
+      message:
+        field.type === "tel"
+          ? "Please enter a valid phone number"
+          : field.validation?.message,
+    },
+  };
+}
 
 async function getForm(preview: boolean): Promise<FormContent | null> {
   try {
@@ -15,7 +42,29 @@ async function getForm(preview: boolean): Promise<FormContent | null> {
       return null
     }
 
-    return form
+    // Transform fields to ensure they're in the grouped format
+    let transformedFields;
+    
+    // Check if the form data is already in the grouped format
+    if (form.fields.length > 0 && form.fields[0].group) {
+      // Form is already in grouped format, just transform fields within groups
+      transformedFields = form.fields.map((group: FormFieldGroup) => ({
+        ...group,
+        fields: group.fields.map((field: FormField) => transformField(field))
+      }));
+    } else {
+      // Form is in the old flat format, convert to grouped format
+      // Group fields by their type or create a single group
+      transformedFields = [{
+        group: "Contact Information",
+        fields: form.fields.map((field: any) => transformField(field))
+      }];
+    }
+
+    return {
+      ...form,
+      fields: transformedFields
+    }
   } catch (error) {
     console.error('Error fetching contact form:', error)
     return null

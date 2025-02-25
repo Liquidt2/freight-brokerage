@@ -11,10 +11,10 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: {
-    default: 'FreightFlow Pro - Modern Freight Brokerage Solutions',
-    template: '%s | FreightFlow Pro',
-  },
+    title: {
+        default: "BKE Logistics, LLC - Modern Freight Brokerage Solutions",
+        template: "%s | BKE Logistics, LLC"
+    },
   description: 'Professional freight brokerage services with cutting-edge technology and personalized solutions for your logistics needs.',
   keywords: ['freight brokerage', 'logistics', 'shipping', 'transportation', 'supply chain'],
   robots: {

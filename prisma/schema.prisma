@@ -47,20 +47,59 @@ model Contact {
 }
 
 model Quote {
-  id              String    @id @default(cuid())
-  companyName     String
-  contactName     String
-  email           String
-  phone           String
-  freightType     String
-  origin          String
-  destination     String
-  weight          Float
-  dimensions      String?
-  specialNeeds    String?
-  status          QuoteStatus @default(PENDING)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id                      String    @id @default(cuid())
+  companyName             String
+  contactName             String
+  email                   String
+  phone                   String
+  companyAddress          String
+  companyCity             String
+  companyState            String
+  companyZip              String
+  
+  // Origin Information
+  originCity              String
+  originState             String
+  zipCode                 String
+  originPickupDate        DateTime?
+  
+  // Destination Information
+  destinationCity         String
+  destinationState        String
+  destinationZip          String
+  deliveryDate           DateTime?
+  
+  // Load Information
+  truckTrailerType       String
+  commodityType          String
+  weight                 String
+  dimensions             String
+  loadType               String
+  
+  // Special Requirements
+  isPalletized           Boolean   @default(false)
+  palletCount            String?
+  isHazmat               Boolean   @default(false)
+  unNumber               String?
+  hazmatClass            String?
+  isTemperatureControlled Boolean  @default(false)
+  temperature            String?
+  isStackable            Boolean   @default(false)
+  isHighValue            Boolean   @default(false)
+  insuranceInfo          String?
+  isHeavyLoad            Boolean   @default(false)
+  heavyLoadWeight        String?
+  isOversizedLoad        Boolean   @default(false)
+  loadingMethod          String?
+  specialHandling        String?
+  
+  // Compliance
+  smsOptIn               Boolean   @default(false)
+  termsAccepted         Boolean   @default(false)
+  
+  status                QuoteStatus @default(PENDING)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
 }
 
 enum Role {

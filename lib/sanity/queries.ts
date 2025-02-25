@@ -64,27 +64,37 @@ export const footerQuery = groq`*[_type == "footer" && defined(companyInfo)][0] 
 
 // Form query
 export const formQuery = groq`*[_type == "form" && status == "published" && slug.current == $slug][0] {
+  _id,
+  _type,
+  name,
+  "slug": slug.current,
   title,
   description,
   fields[] {
-    _key,
-    label,
-    type,
-    name,
-    required,
-    hidden,
-    showWhen {
-      field,
-      equals
-    },
-    options[] {
+    group,
+    fields[] {
       _key,
-      value
-    },
-    placeholder,
-    validation {
-      pattern,
-      message
+      label,
+      type,
+      name,
+      required,
+      hidden,
+      showWhen {
+        field,
+        equals
+      },
+      options[] {
+        _key,
+        value
+      },
+      placeholder,
+      validation {
+        min,
+        max,
+        pattern,
+        message
+      },
+      unit
     }
   },
   complianceFields[] {
@@ -120,21 +130,69 @@ export const formQuery = groq`*[_type == "form" && status == "published" && slug
       },
       footer
     }
-  }
+  },
+  "_updatedAt": _updatedAt
 }`
 
 // Terms & Privacy queries
 export const termsQuery = groq`*[_type == "terms"][0] {
   title,
-  content,
   lastUpdated,
+  introduction,
+  content[] {
+    sectionTitle,
+    content,
+    subsections[] {
+      title,
+      content
+    }
+  },
+  serviceTerms[] {
+    title,
+    description,
+    conditions
+  },
+  liabilityLimitations[] {
+    title,
+    description
+  },
+  disputeResolution {
+    process,
+    jurisdiction,
+    arbitration
+  },
+  terminationClauses[] {
+    title,
+    conditions,
+    consequences
+  },
+  contactInformation {
+    email,
+    phone,
+    address
+  },
+  effectiveDate,
   seo
 }`
 
 export const policyQuery = groq`*[_type == "policy"][0] {
   title,
-  content,
   lastUpdated,
+  introduction,
+  content[] {
+    sectionTitle,
+    content,
+    subsections[] {
+      title,
+      content
+    }
+  },
+  contactInformation {
+    email,
+    phone,
+    address
+  },
+  effectiveDate,
   seo
 }`
 

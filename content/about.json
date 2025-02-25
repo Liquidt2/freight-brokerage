@@ -1,5 +1,5 @@
 {
-  "title": "About FreightFlow Pro",
+  "title": "About BKE Logistics, LLC",
   "mission": "To revolutionize the freight brokerage industry by providing specialized, technology-driven logistics solutions in flatbed, plastics, and pharmaceutical transportation, ensuring seamless supply chain operations while maintaining the highest standards of safety and efficiency.",
   "history": [
     {
@@ -49,7 +49,7 @@
     {
       "name": "Michael Anderson",
       "role": "CEO & Founder",
-      "bio": "With over 20 years in logistics, Michael founded FreightFlow Pro to address the unique challenges in specialized freight transportation.",
+      "bio": "With over 20 years in logistics, Michael founded BKE Logistics, LLC to address the unique challenges in specialized freight transportation.",
       "socialLinks": {
         "linkedin": "https://linkedin.com/in/michael-anderson"
       }
@@ -105,8 +105,8 @@
     }
   },
   "seo": {
-    "title": "About FreightFlow Pro | Specialized Freight Brokerage Services",
-    "description": "Learn about FreightFlow Pro's expertise in flatbed, plastics, and pharmaceutical freight brokerage. Discover our history, values, and commitment to excellence in specialized logistics.",
+    "title": "About BKE Logistics, LLC | Specialized Freight Brokerage Services",
+    "description": "Learn about BKE Logistics, LLC's expertise in flatbed, plastics, and pharmaceutical freight brokerage. Discover our history, values, and commitment to excellence in specialized logistics.",
     "keywords": ["freight brokerage", "flatbed transport", "pharmaceutical logistics", "plastics shipping"]
   }
 }

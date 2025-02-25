@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'FreightFlow Pro CMS',
+  title: 'BKE Logistics, LLC CMS',
   description: 'Content Management System',
   robots: {
     index: false,

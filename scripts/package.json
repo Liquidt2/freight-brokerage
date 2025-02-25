@@ -1,0 +1,7 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "Utility scripts for the freight-brokerage project",
+  "type": "module",
+  "private": true
+}
