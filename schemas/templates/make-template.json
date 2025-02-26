@@ -1,0 +1,186 @@
+{
+  "_type": "webhookTemplate",
+  "name": "Make.com Integration",
+  "description": "Template for integrating with Make.com scenarios",
+  "service": "make",
+  "urlTemplate": "https://hook.make.com/your-webhook-id",
+  "defaultHeaders": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    }
+  ],
+  "defaultAuthType": "none",
+  "payloadTemplate": {
+    "code": "{\n  \"formData\": \"{{data}}\",\n  \"formId\": \"{{formId}}\",\n  \"timestamp\": \"{{timestamp}}\",\n  \"source\": \"freight-brokerage\"\n}"
+  },
+  "instructions": [
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "marks": ["strong"],
+          "text": "Setting up Make.com Integration"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "Follow these steps to set up a webhook in Make.com:"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "markDefs": [
+        {
+          "_key": "link1",
+          "_type": "link",
+          "href": "https://make.com"
+        }
+      ],
+      "children": [
+        {
+          "_type": "span",
+          "text": "1. Log in to your "
+        },
+        {
+          "_type": "span",
+          "marks": ["link1"],
+          "text": "Make.com"
+        },
+        {
+          "_type": "span",
+          "text": " account"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "2. Create a new scenario or open an existing one"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "3. Add a 'Webhooks' module as the first step"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "4. Select 'Custom webhook' as the webhook type"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "5. Click 'Add' to create the webhook"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "6. Copy the generated webhook URL"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "7. Create a new webhook in Sanity using this template"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "8. Paste the Make.com webhook URL into the URL field"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "9. Select the events you want to trigger this webhook"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "10. Save the webhook configuration"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "11. In Make.com, click 'Run once' to capture the data structure"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "12. Submit a test form to trigger the webhook"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "13. Continue building your scenario with the received data"
+        }
+      ]
+    }
+  ]
+}

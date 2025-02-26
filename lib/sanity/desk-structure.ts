@@ -1,5 +1,5 @@
 import { StructureBuilder, StructureResolver } from 'sanity/desk'
-import { CommentIcon } from '@sanity/icons'
+import { CommentIcon, LinkIcon, DocumentIcon, CogIcon } from '@sanity/icons'
 import BlogPreview from '@/components/studio/BlogPreview'
 
 export const deskStructure: StructureResolver = (S: StructureBuilder) => {
@@ -51,9 +51,44 @@ export const deskStructure: StructureResolver = (S: StructureBuilder) => {
             ])
         ),
 
+      // Webhooks & Integrations Section
+      S.listItem()
+        .title('Webhooks & Integrations')
+        .icon(LinkIcon)
+        .child(
+          S.list()
+            .title('Webhooks & Integrations')
+            .items([
+              S.listItem()
+                .title('Webhook Configurations')
+                .icon(CogIcon)
+                .schemaType('webhook')
+                .child(
+                  S.documentTypeList('webhook')
+                    .title('Webhook Configurations')
+                ),
+              S.listItem()
+                .title('Webhook Logs')
+                .icon(DocumentIcon)
+                .schemaType('webhookLog')
+                .child(
+                  S.documentTypeList('webhookLog')
+                    .title('Webhook Logs')
+                    .defaultOrdering([{ field: 'timestamp', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('Integration Templates')
+                .schemaType('webhookTemplate')
+                .child(
+                  S.documentTypeList('webhookTemplate')
+                    .title('Integration Templates')
+                ),
+            ])
+        ),
+
       // Other Content Types
       ...S.documentTypeListItems().filter(
-        (item) => !['post', 'chatLead', 'chatSettings'].includes(item.getId() || '')
+        (item) => !['post', 'chatLead', 'chatSettings', 'webhook', 'webhookLog', 'webhookTemplate'].includes(item.getId() || '')
       )
     ])
 }

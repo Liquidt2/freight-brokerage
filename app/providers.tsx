@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+import { SanityClientProvider } from '@/lib/sanity/client-wrapper'
 
 export default function Providers({
   children,
@@ -15,8 +16,10 @@ export default function Providers({
       enableSystem
       disableTransitionOnChange
     >
-      {children}
-      <Toaster />
+      <SanityClientProvider>
+        {children}
+        <Toaster />
+      </SanityClientProvider>
     </ThemeProvider>
   )
 }

@@ -1,7 +1,6 @@
 import { createClient, ClientConfig, ClientPerspective } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 import { token, projectId, dataset, apiVersion } from '../env'
-import { headers } from 'next/headers'
 
 if (!projectId || !dataset) {
   throw new Error('Required environment variables are not set');
@@ -20,8 +19,11 @@ const clientConfig: ClientConfig = {
   ignoreBrowserTokenWarning: true
 }
 
-// Create a client for fetching data
-export const client = createClient(clientConfig)
+// Create a client for fetching data - using a function to avoid React context issues
+const createSanityClient = () => createClient(clientConfig)
+
+// Export a client instance for direct use
+export const client = createSanityClient()
 
 // Helper function to get the client
 export const getClient = (preview: boolean = false) => {

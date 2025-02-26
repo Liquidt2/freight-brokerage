@@ -1,19 +1,22 @@
-import { definePlugin } from 'sanity'
-import { client, getClient } from './client'
+// Server-side version of webhooks.ts that doesn't rely on Sanity's React context
+import { createClient } from '@sanity/client'
+import { token, projectId, dataset, apiVersion } from '../env'
 
 // Legacy webhook URLs from environment variables
 const WEBHOOK_CREATE = process.env.NEXT_PUBLIC_WEBHOOK_CREATE
 const WEBHOOK_UPDATE = process.env.NEXT_PUBLIC_WEBHOOK_UPDATE
 const WEBHOOK_PUBLISH = process.env.NEXT_PUBLIC_WEBHOOK_PUBLISH
 
-interface SanityDocument {
-  _type: string
-  _id: string
-  title?: string
-  status?: string
-  autoPublish?: boolean
-  publishedAt?: string
-  [key: string]: any
+// Create a server-side client
+const createServerClient = () => {
+  return createClient({
+    projectId,
+    dataset,
+    apiVersion,
+    useCdn: false,
+    token,
+    perspective: 'published',
+  })
 }
 
 interface WebhookConfig {
@@ -35,19 +38,9 @@ interface WebhookConfig {
   enabled: boolean
 }
 
-interface PluginContext {
-  documentStore: {
-    on: (event: string, callback: (doc: any) => Promise<void>) => void
-  }
-  client: {
-    fetch: <T>(query: string, params?: any) => Promise<T>
-    create: (document: any) => Promise<any>
-  }
-}
-
 // Helper function to get all enabled webhooks
 async function getEnabledWebhooks(): Promise<WebhookConfig[]> {
-  const client = getClient()
+  const client = createServerClient()
   return client.fetch(`
     *[_type == "webhook" && enabled == true] {
       _id,
@@ -79,6 +72,7 @@ async function logWebhookExecution(
   payload?: any
 ) {
   try {
+    const client = createServerClient()
     await client.create({
       _type: 'webhookLog',
       webhook: {
@@ -195,8 +189,8 @@ async function executeWebhook(
   }
 }
 
-// Helper function to execute all matching webhooks
-async function executeWebhooks(eventType: string, document: SanityDocument): Promise<void> {
+// Export function to trigger webhooks from server actions
+export async function triggerWebhook(eventType: string, data: any): Promise<void> {
   try {
     const webhooks = await getEnabledWebhooks()
     
@@ -204,9 +198,9 @@ async function executeWebhooks(eventType: string, document: SanityDocument): Pro
     await Promise.all(
       webhooks
         .filter(webhook => webhook.events.includes(eventType))
-        .map(webhook => executeWebhook(webhook, eventType, document))
+        .map(webhook => executeWebhook(webhook, eventType, data))
     )
-    
+
     // Legacy webhook support
     if (eventType === 'post-created' && WEBHOOK_CREATE) {
       try {
@@ -214,11 +208,7 @@ async function executeWebhooks(eventType: string, document: SanityDocument): Pro
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            _type: document._type,
-            _id: document._id,
-            title: document.title,
-            status: document.status,
-            autoPublish: document.autoPublish,
+            ...data,
             event: 'onCreate'
           })
         })
@@ -231,11 +221,7 @@ async function executeWebhooks(eventType: string, document: SanityDocument): Pro
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            _type: document._type,
-            _id: document._id,
-            title: document.title,
-            status: document.status,
-            autoPublish: document.autoPublish,
+            ...data,
             event: 'onUpdate'
           })
         })
@@ -248,11 +234,7 @@ async function executeWebhooks(eventType: string, document: SanityDocument): Pro
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            _type: document._type,
-            _id: document._id,
-            title: document.title,
-            status: document.status,
-            publishedAt: document.publishedAt,
+            ...data,
             event: 'onPublish'
           })
         })
@@ -260,55 +242,6 @@ async function executeWebhooks(eventType: string, document: SanityDocument): Pro
         console.error('Legacy webhook onPublish error:', err)
       }
     }
-  } catch (err) {
-    console.error('Error executing webhooks:', err)
-  }
-}
-
-export const webhooksPlugin = definePlugin((config) => {
-  return {
-    name: 'sanity-plugin-webhooks',
-    setup: (context: PluginContext) => {
-      // Handle document creation
-      context.documentStore.on('create', async (document: SanityDocument) => {
-        if (document._type === 'post') {
-          await executeWebhooks('post-created', document)
-        }
-      })
-
-      // Handle document updates
-      context.documentStore.on('update', async (update: { 
-        document: SanityDocument
-        previous: SanityDocument 
-      }) => {
-        const { document } = update
-        
-        if (document._type === 'post') {
-          await executeWebhooks('post-updated', document)
-        }
-      })
-
-      // Handle document publishing
-      context.documentStore.on('publish', async (document: SanityDocument) => {
-        if (document._type === 'post') {
-          await executeWebhooks('post-published', document)
-        }
-      })
-    }
-  }
-})
-
-// Export function to trigger webhooks from server actions
-export async function triggerWebhook(eventType: string, data: any): Promise<void> {
-  try {
-    const webhooks = await getEnabledWebhooks()
-    
-    // Execute each matching webhook
-    await Promise.all(
-      webhooks
-        .filter(webhook => webhook.events.includes(eventType))
-        .map(webhook => executeWebhook(webhook, eventType, data))
-    )
   } catch (err) {
     console.error('Error triggering webhooks:', err)
   }

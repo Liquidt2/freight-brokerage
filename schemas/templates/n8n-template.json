@@ -1,0 +1,156 @@
+{
+  "_type": "webhookTemplate",
+  "name": "n8n.io Integration",
+  "description": "Template for integrating with n8n.io workflows",
+  "service": "n8n",
+  "urlTemplate": "https://your-n8n-instance.com/webhook/{workflow-id}",
+  "defaultHeaders": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    }
+  ],
+  "defaultAuthType": "bearer",
+  "payloadTemplate": {
+    "code": "{\n  \"formData\": \"{{data}}\",\n  \"formId\": \"{{formId}}\",\n  \"timestamp\": \"{{timestamp}}\",\n  \"source\": \"freight-brokerage\"\n}"
+  },
+  "instructions": [
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "marks": ["strong"],
+          "text": "Setting up n8n.io Integration"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "Follow these steps to set up a webhook in n8n.io:"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "markDefs": [
+        {
+          "_key": "link1",
+          "_type": "link",
+          "href": "https://n8n.io"
+        }
+      ],
+      "children": [
+        {
+          "_type": "span",
+          "text": "1. Log in to your "
+        },
+        {
+          "_type": "span",
+          "marks": ["link1"],
+          "text": "n8n.io"
+        },
+        {
+          "_type": "span",
+          "text": " instance"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "2. Create a new workflow or open an existing one"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "3. Add a 'Webhook' node as a trigger"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "4. Configure the webhook to receive POST requests"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "5. Copy the generated webhook URL"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "6. Create a new webhook in Sanity using this template"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "7. Paste the n8n webhook URL into the URL field"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "8. Select the events you want to trigger this webhook"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "9. Add authentication if your n8n instance requires it"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "10. Save the webhook configuration"
+        }
+      ]
+    }
+  ]
+}

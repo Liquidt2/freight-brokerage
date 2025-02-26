@@ -15,6 +15,9 @@ import post from './post';
 import seo from './seo';
 import service from './service';
 import terms from './terms';
+import webhook from './webhook';
+import webhookLog from './webhookLog';
+import webhookTemplate from './webhookTemplate';
 // Export all schema types
 export const schemaTypes = [
   about,
@@ -36,5 +39,8 @@ export const schemaTypes = [
   post,
   seo,
   service,
-  terms
+  terms,
+  webhook,
+  webhookLog,
+  webhookTemplate
 ];

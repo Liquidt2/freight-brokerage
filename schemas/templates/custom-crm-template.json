@@ -1,0 +1,184 @@
+{
+  "_type": "webhookTemplate",
+  "name": "Custom CRM Integration",
+  "description": "Template for integrating with a custom CRM system",
+  "service": "custom-crm",
+  "urlTemplate": "https://your-crm-domain.com/api/webhooks/incoming",
+  "defaultHeaders": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "X-Source",
+      "value": "freight-brokerage-website"
+    }
+  ],
+  "defaultAuthType": "apikey",
+  "payloadTemplate": {
+    "code": "{\n  \"type\": \"{{formId}}\",\n  \"contact\": {\n    \"name\": \"{{data.fullName}}\",\n    \"email\": \"{{data.email}}\",\n    \"phone\": \"{{data.phone}}\"\n  },\n  \"company\": {\n    \"name\": \"{{data.companyName}}\",\n    \"address\": \"{{data.companyAddress}}\",\n    \"city\": \"{{data.companyCity}}\",\n    \"state\": \"{{data.companyState}}\",\n    \"zip\": \"{{data.companyZip}}\"\n  },\n  \"message\": \"{{data.message}}\",\n  \"subject\": \"{{data.subject}}\",\n  \"metadata\": {\n    \"source\": \"website\",\n    \"timestamp\": \"{{timestamp}}\"\n  }\n}"
+  },
+  "instructions": [
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "marks": ["strong"],
+          "text": "Setting up Custom CRM Integration"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "Follow these steps to set up a webhook for your custom CRM:"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "1. Log in to your CRM's administration panel"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "2. Navigate to the API or Integrations section"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "3. Create a new webhook endpoint or API integration"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "4. Configure the endpoint to receive POST requests with JSON data"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "5. Generate an API key for authentication"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "6. Copy the webhook URL and API key"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "7. Create a new webhook in Sanity using this template"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "8. Paste the CRM webhook URL into the URL field"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "9. Enter the API key name (e.g., 'X-API-Key') and value"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "10. Select the events you want to trigger this webhook"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "11. Modify the payload template to match your CRM's expected format"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "12. Save the webhook configuration"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "13. Test the integration by submitting a form"
+        }
+      ]
+    },
+    {
+      "_type": "block",
+      "style": "normal",
+      "children": [
+        {
+          "_type": "span",
+          "text": "14. Check your CRM to verify the data was received correctly"
+        }
+      ]
+    }
+  ]
+}

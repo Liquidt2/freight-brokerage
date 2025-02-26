@@ -3,6 +3,7 @@
 import { getClient } from '@/lib/sanity/client';
 import { formQuery } from '@/lib/sanity/queries';
 import { getServerEnv } from '@/lib/env/server';
+import { triggerWebhook } from '@/lib/sanity/webhooks-server';
 import nodemailer from 'nodemailer';
 import { headers } from 'next/headers';
 
@@ -63,7 +64,7 @@ class FormSubmissionError extends Error {
   }
 }
 
-function formatEmailContent(template: EmailTemplate, data: Record<string, any>): { subject: string; text: string } {
+function formatEmailContent(template: EmailTemplate, data: Record<string, any>, form: FormConfig): { subject: string; text: string } {
   // Log the data for debugging
   console.log('Email template data:', JSON.stringify(data, null, 2));
   
@@ -114,6 +115,38 @@ function formatEmailContent(template: EmailTemplate, data: Record<string, any>):
     content += '\n';
   });
 
+  // Ensure compliance fields are always included
+  let hasComplianceSection = false;
+  
+  // Check if there's already a compliance/consent section
+  template.sections.forEach(section => {
+    const sectionTitle = section.title.toLowerCase();
+    if (
+      sectionTitle.includes('compliance') || 
+      sectionTitle.includes('consent') || 
+      sectionTitle.includes('communication') || 
+      sectionTitle.includes('additional information')
+    ) {
+      hasComplianceSection = true;
+    }
+  });
+  
+  // If no compliance section exists, add one with the consent fields
+  if (!hasComplianceSection && form.complianceFields && form.complianceFields.length > 0) {
+    content += `CONSENT INFORMATION\n${'-'.repeat('CONSENT INFORMATION'.length)}\n`;
+    
+    // Add each compliance field
+    form.complianceFields.forEach(field => {
+      const fieldName = field.type === 'consent' ? 'termsAccepted' : 
+                        field.type === 'sms' || field.type === 'opt-in' ? 'smsOptIn' : field.type;
+      
+      const fieldValue = data[fieldName] ? 'Yes' : 'No';
+      content += `${field.text}: ${fieldValue}\n`;
+    });
+    
+    content += '\n';
+  }
+
   // Add footer if present
   if (template.footer) {
     content += `\n${formatValue(template.footer)}`;
@@ -123,53 +156,61 @@ function formatEmailContent(template: EmailTemplate, data: Record<string, any>):
 }
 
 /**
- * Sends form data to a webhook if configured
+ * Sends form data to webhooks
  * @param formId The ID of the form being submitted
  * @param data The form data
  */
 async function sendToWebhook(formId: string, data: Record<string, any>): Promise<void> {
-  const env = getServerEnv();
-  const webhookUrl = env.webhook.url;
-  const webhookSecret = env.webhook.secret;
-  
-  // Skip if webhook URL is not configured
-  if (!webhookUrl) {
-    console.log('Webhook URL not configured, skipping webhook call');
-    return;
-  }
-  
   try {
-    console.log(`Sending ${formId} form data to webhook: ${webhookUrl}`);
+    // Use the legacy webhook if configured
+    const env = getServerEnv();
+    const webhookUrl = env.webhook.url;
+    const webhookSecret = env.webhook.secret;
     
-    // Prepare headers with authentication if secret is provided
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    };
-    
-    if (webhookSecret) {
-      headers['Authorization'] = `Bearer ${webhookSecret}`;
+    if (webhookUrl) {
+      console.log(`Sending ${formId} form data to legacy webhook: ${webhookUrl}`);
+      
+      // Prepare headers with authentication if secret is provided
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (webhookSecret) {
+        headers['Authorization'] = `Bearer ${webhookSecret}`;
+      }
+      
+      // Send data to webhook
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          formId,
+          data,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Legacy webhook error (${response.status}): ${errorText}`);
+      } else {
+        console.log(`Legacy webhook call successful: ${response.status}`);
+      }
     }
+
+    // Use the new webhook system
+    const eventType = formId === 'contact-us' ? 'contact-form' : 'quote-form';
+    console.log(`Triggering webhooks for event: ${eventType}`);
     
-    // Send data to webhook
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        formId,
-        data,
-        timestamp: new Date().toISOString(),
-      }),
+    await triggerWebhook(eventType, {
+      formId,
+      data,
+      timestamp: new Date().toISOString(),
     });
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Webhook error (${response.status}): ${errorText}`);
-    } else {
-      console.log(`Webhook call successful: ${response.status}`);
-    }
   } catch (error) {
     // Log error but don't throw - we don't want webhook failures to break form submission
-    console.error('Error calling webhook:', error);
+    console.error('Error calling webhooks:', error);
   }
 }
 
@@ -372,7 +413,7 @@ export async function submitForm(params: FormSubmission): Promise<{ success: boo
     // 6. Get email template and format content
     const defaultTemplate = getDefaultEmailTemplate(formId);
     const template = form.notifications?.emailTemplate || defaultTemplate;
-    const { subject, text } = formatEmailContent(template, data);
+    const { subject, text } = formatEmailContent(template, data, form);
 
     // 7. Create email transporter
     const transporter = nodemailer.createTransport({
