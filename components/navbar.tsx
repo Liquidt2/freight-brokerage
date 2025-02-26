@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import { Sun, Moon } from "lucide-react"
@@ -44,12 +45,16 @@ export default function Navbar({ navigation, className }: NavbarProps) {
             {navigation.logo?.showImage && navigation.logo?.image && (
               <div style={{ 
                 width: navigation.logo.imageWidth, 
-                height: navigation.logo.logoHeight 
+                height: navigation.logo.logoHeight,
+                position: 'relative'
               }}>
-                <img
+                <Image
                   src={urlFor(navigation.logo.image).url()}
                   alt={navigation.logo.text || "Logo"}
-                  className="w-full h-full object-contain"
+                  fill
+                  className="object-contain"
+                  sizes={`${navigation.logo.imageWidth}px`}
+                  priority
                 />
               </div>
             )}

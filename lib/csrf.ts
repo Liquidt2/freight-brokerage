@@ -48,6 +48,6 @@ export async function validateCSRFToken(token: string): Promise<boolean> {
     return false;
   } catch (error) {
     console.error('Error validating CSRF token:', error);
-    return true; // Fail open if Redis is unavailable
+    return false; // Fail closed if Redis is unavailable for security
   }
 }

@@ -26,6 +26,6 @@ export async function rateLimit(identifier: string): Promise<boolean> {
     return requests > RATE_LIMIT_REQUESTS;
   } catch (error) {
     console.error('Rate limiting error:', error);
-    return false; // Fail open if Redis is unavailable
+    return true; // Fail closed if Redis is unavailable for security
   }
 }

@@ -3,6 +3,8 @@ import OpenAI from 'openai'
 import { client } from '@/lib/sanity/client'
 import { chatSettingsQuery } from '@/lib/sanity/queries'
 import { groq } from 'next-sanity'
+import { rateLimit } from '@/lib/rate-limit'
+import { headers } from 'next/headers'
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing OPENAI_API_KEY environment variable')
@@ -20,7 +22,28 @@ const contentQuery = groq`*[_type in ["post"] && defined(content)] {
 
 export async function POST(req: Request) {
   try {
-    const { message, messages } = await req.json()
+    // Apply rate limiting
+    const headersList = headers()
+    const ip = headersList.get('x-forwarded-for') || 'unknown'
+    const isRateLimited = await rateLimit(`chat:${ip}`)
+    
+    if (isRateLimited) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
+    }
+    
+    // Validate input
+    const body = await req.json()
+    const { message, messages } = body
+    
+    if (!message || !messages || !Array.isArray(messages)) {
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 }
+      )
+    }
 
     // Fetch relevant content from Sanity
     const content = await client.fetch(contentQuery)

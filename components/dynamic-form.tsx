@@ -115,7 +115,7 @@ const getComplianceFieldName = (type: string) =>
       return steps;
     }, [form.fields, form.complianceFields]);
 
-    const currentStepFields = useMemo(() => {
+  const currentStepFields = useMemo(() => {
       if (currentStep === form.fields.length) {
         return [];
       }
@@ -128,7 +128,7 @@ const getComplianceFieldName = (type: string) =>
         fields.map(f => `${f.name} (${f.type})${f.showWhen ? ` - shows when ${f.showWhen.field}=${f.showWhen.equals}` : ''}`));
       
       return fields;
-    }, [currentStep, form.fields, forceUpdate]); // Add forceUpdate to re-evaluate when form is forced to re-render
+    }, [currentStep, form.fields]); // Remove forceUpdate as it's unnecessary
 
   // Watch all form values to trigger re-renders when they change
   const formValues = useWatch({
@@ -174,7 +174,7 @@ const getComplianceFieldName = (type: string) =>
         return false;
       }
     },
-    [formInstance, formValues, forceUpdate] // Add forceUpdate to re-evaluate when form is forced to re-render
+    [formInstance] // Remove unnecessary dependencies
   );
 
   const validateStep = async (step: number) => {
