@@ -18,16 +18,16 @@ async function getServices(): Promise<Service[]> {
 
       // Validate required fields
       const validServices = services.filter((service: any) => {
-        const hasRequiredFields = 
-          service.title && 
-          service.slug && 
-          service.description && 
-          service.icon;
-        
+        const hasRequiredFields =
+          service.title &&
+          service.slug &&
+          service.description &&
+          service.icon
+
         if (!hasRequiredFields) {
           console.warn('Service missing required fields:', service)
         }
-        
+
         return hasRequiredFields
       })
 
@@ -49,7 +49,7 @@ async function getServices(): Promise<Service[]> {
         stack: error instanceof Error ? error.stack : undefined,
         retriesLeft: retries - 1
       })
-      
+
       retries--
       if (retries === 0) {
         console.error('All retries failed, returning empty array')
@@ -65,7 +65,8 @@ async function getServices(): Promise<Service[]> {
 function LoadingState() {
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Changed grid layout to a single column */}
+      <div className="grid grid-cols-1 gap-6">
         {[...Array(6)].map((_, i) => (
           <div key={i} className="animate-pulse">
             <div className="bg-muted rounded-lg h-48 mb-4"></div>

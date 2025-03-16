@@ -43,29 +43,40 @@ export default defineType({
       type: 'array',
       of: [
         {
-          type: 'object',
-          fields: [
-            {
-              name: 'year',
-              title: 'Year',
-              type: 'number',
-              validation: Rule => Rule.required(),
-            },
-            {
-              name: 'title',
-              title: 'Title',
-              type: 'string',
-              validation: Rule => Rule.required(),
-            },
-            {
-              name: 'description',
-              title: 'Description',
-              type: 'text',
-              validation: Rule => Rule.required(),
-            },
+          type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Heading 3', value: 'h3' },
+            { title: 'Heading 4', value: 'h4' },
           ],
+          lists: [
+            { title: 'Bullet', value: 'bullet' },
+            { title: 'Numbered', value: 'number' }
+          ],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+            annotations: [
+              {
+                title: 'URL',
+                name: 'link',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'URL',
+                    name: 'href',
+                    type: 'url',
+                  },
+                ],
+              },
+            ],
+          },
         },
       ],
+      description: 'Write a narrative of your company\'s history. You can use formatting options like headers, bold text, and bullet points.',
+      validation: Rule => Rule.required(),
     }),
     defineField({
       name: 'values',

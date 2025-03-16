@@ -15,36 +15,64 @@ if (!projectId || !dataset) {
 
 // Initialize webhook templates when in browser environment
 if (typeof window !== 'undefined') {
-  // Import templates on studio load
   setTimeout(() => {
-    importWebhookTemplates().catch(console.error);
-  }, 2000); // Delay to ensure studio is fully loaded
+    importWebhookTemplates().catch(console.error)
+  }, 2000)
 }
 
-export const studioConfig = defineConfig({
+export default defineConfig({
   name: 'freight-brokerage',
   title: 'BKE Logistics, LLC CMS',
   projectId,
   dataset,
   apiVersion,
-  basePath: '/studio',  // ✅ This ensures it mounts at `/studio`
-  useCdn: false, // ✅ Ensure fresh API calls
+  basePath: '/studio',
+  useCdn: false,
+
+  // Remove custom auth block to let Sanity handle login defaults
+  // This prevents the login URL from being undefined
+  // auth: {
+  //   redirectOnSingle: false,
+  //   mode: 'replace',
+  //   loginUrl: '/studio/login',
+  //   requireLogin: true,
+  //   providers: [
+  //     { name: 'sanity-login', title: 'Email / Password' }
+  //   ]
+  // },
+
+  cors: {
+    credentials: 'include',
+    allowedOrigins: ['https://bkelogistics.com']
+  },
+
+  acl: {
+    read: ['authenticated'],
+    write: ['authenticated'],
+    default: false
+  },
+
   plugins: [
-    deskTool({
-      structure: deskStructure
-    }),
-    visionTool({ defaultApiVersion: apiVersion }),
+    deskTool({ structure: deskStructure }),
+    visionTool({ defaultApiVersion: apiVersion, requireLogin: true }),
     codeInput(),
     webhooksPlugin
   ],
+
   schema: {
-    types: schemaTypes,
+    types: schemaTypes
   },
+
   document: {
-    productionUrl: async (prev, context) => prev,
+    productionUrl: async (prev) => prev,
+    actions: (prev, context) =>
+      prev.filter(action => context.currentUser ? true : action.type !== 'delete')
   },
-  auth: {
-    redirectOnSingle: false, // ✅ Ensures login isn't skipped
-    mode: 'replace', // ✅ Ensures proper login handling
+
+  studio: {},
+
+  session: {
+    tokenExpiration: 86400,
+    requireLogin: true
   }
 })

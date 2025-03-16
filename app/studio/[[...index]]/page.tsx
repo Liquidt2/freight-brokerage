@@ -1,8 +1,7 @@
-
 'use client'
 
 import { NextStudio } from 'next-sanity/studio'
-import { studioConfig } from '@/sanity.config'
+import config from '@/sanity.config'
 import { Suspense, useEffect, useState } from 'react'
 
 export default function StudioPage() {
@@ -41,10 +40,20 @@ export default function StudioPage() {
   }
 
   return (
-    <NextStudio 
-      config={studioConfig}
-      unstable_noAuthBoundary
-      unstable_globalStyles
-    />
+    <Suspense fallback={
+      <div className="sanity-studio-loading">
+        <div className="loading-content">
+          <h1>Loading Sanity Studio...</h1>
+          <p>Initializing studio components...</p>
+        </div>
+      </div>
+    }>
+      <NextStudio 
+        config={config}
+        // Remove these props as they're not needed and might cause issues
+        // unstable_noAuthBoundary
+        // unstable_globalStyles
+      />
+    </Suspense>
   )
 }

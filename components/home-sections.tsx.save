@@ -150,7 +150,7 @@ export function HeroSection({ data }: { data: HeroData }) {
 export function IndustryFocusSection({ data }: { data: IndustryFocusData }) {
   const getIcon = (iconName: string) => {
    console.log('iconName:', iconName);
-    switch ((iconName || 'default').toLowerCase()) {
+    switch (iconName.toLowerCase()) {
       case 'truck':
         return Truck
       case 'box':

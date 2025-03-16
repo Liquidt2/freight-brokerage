@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies with exact versions for reproducibility
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Copy prisma schema for generation
 COPY prisma ./prisma/
@@ -22,7 +22,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18.19-alpine AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
@@ -35,7 +35,7 @@ RUN adduser --system --uid 1001 nextjs
 
 # Install only production dependencies
 COPY --from=builder /app/package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=production --legacy-peer-deps
 
 # Copy Prisma client and schema
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma

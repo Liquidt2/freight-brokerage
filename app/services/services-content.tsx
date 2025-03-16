@@ -36,19 +36,15 @@ const certifications: Certification[] = [
     title: "Safety & Compliance",
     items: [
       "DOT Safety Rating: Satisfactory",
-      "ISO 9001:2015 Certified",
-      "GDP Certified",
-      "CTPAT Certified"
+      "High CSA Scores"
     ]
   },
   {
     icon: 'fileCheck',
     title: "Insurance Coverage",
     items: [
-      "$5M General Liability",
-      "$1M Cargo Insurance",
-      "Pharmaceutical Endorsement",
-      "Environmental Liability"
+      "$1,000,000 General Liability",
+      "$100,000 Cargo Insurance"
     ]
   },
   {
@@ -56,7 +52,6 @@ const certifications: Certification[] = [
     title: "Performance Metrics",
     items: [
       "99.8% On-Time Delivery",
-      "0.1% Claims Ratio",
       "24/7 Tracking",
       "Real-Time POD"
     ]
@@ -65,10 +60,8 @@ const certifications: Certification[] = [
     icon: 'bell',
     title: "Monitoring Systems",
     items: [
-      "GPS Fleet Tracking",
-      "Temperature Monitoring",
-      "Route Optimization",
-      "ELD Compliance"
+      "GPS Tracking",
+      "Route Optimization"
     ]
   }
 ]
@@ -94,7 +87,8 @@ export default function ServicesContent({ initialServices }: { initialServices: 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Updated to a single column layout */}
+        <div className="grid grid-cols-1 gap-8">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="animate-pulse">
               <div className="bg-muted rounded-lg h-48 mb-4"></div>
@@ -120,7 +114,8 @@ export default function ServicesContent({ initialServices }: { initialServices: 
   return (
     <div className="space-y-20">
       {/* Main Services */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Updated grid layout to force a single column */}
+      <div className="grid grid-cols-1 gap-8">
         {services.map((service, index) => {
           const Icon = iconMap[service.icon as keyof typeof iconMap]
           return (
@@ -258,9 +253,9 @@ export default function ServicesContent({ initialServices }: { initialServices: 
         className="bg-primary text-primary-foreground rounded-lg p-8 md:p-12 card-border"
       >
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Our Standards & Certifications</h2>
+          <h2 className="text-3xl font-bold mb-4">Our Standards</h2>
           <p className="text-lg opacity-90">
-            Industry-leading certifications and monitoring systems ensuring the highest quality service
+            BKE Logistics rigorously vet carriers to ensure the highest quality service
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
